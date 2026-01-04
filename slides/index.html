@@ -1,0 +1,1995 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IoT — Arduino IDE — ESP32 | Formation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0e14;
+      --bg-card: #111820;
+      --bg-code: #0d1117;
+      --accent-cyan: #00fff2;
+      --accent-green: #39ff14;
+      --accent-orange: #ff6b35;
+      --accent-purple: #bf5af2;
+      --accent-blue: #007aff;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --text-dim: #484f58;
+      --border-color: #1c2936;
+      --circuit-color: #1a2332;
+      --glow-cyan: 0 0 20px rgba(0, 255, 242, 0.5);
+      --glow-green: 0 0 20px rgba(57, 255, 20, 0.5);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    /* Circuit board background pattern */
+    .circuit-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(90deg, var(--circuit-color) 1px, transparent 1px) 0 0 / 50px 50px,
+        linear-gradient(var(--circuit-color) 1px, transparent 1px) 0 0 / 50px 50px,
+        radial-gradient(circle at 25px 25px, var(--circuit-color) 2px, transparent 2px) 0 0 / 50px 50px;
+      opacity: 0.4;
+    }
+
+    .circuit-traces {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .circuit-traces::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+      opacity: 0.1;
+      animation: trace-pulse 4s ease-in-out infinite;
+    }
+
+    .circuit-traces::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 30%;
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(180deg, transparent, var(--accent-green), transparent);
+      opacity: 0.1;
+      animation: trace-pulse 5s ease-in-out infinite 1s;
+    }
+
+    @keyframes trace-pulse {
+      0%, 100% { opacity: 0.05; }
+      50% { opacity: 0.2; }
+    }
+
+    /* Header / Navigation */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: linear-gradient(180deg, var(--bg-dark) 0%, transparent 100%);
+      padding: 1rem 2rem;
+    }
+
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1.2rem;
+      color: var(--accent-cyan);
+      text-shadow: var(--glow-cyan);
+      letter-spacing: 2px;
+    }
+
+    .logo span {
+      color: var(--text-dim);
+      font-weight: 400;
+    }
+
+    .day-nav {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .day-btn {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.6rem 1.5rem;
+      background: transparent;
+      border: 2px solid var(--border-color);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 1px;
+    }
+
+    .day-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .day-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--text-primary);
+    }
+
+    .day-btn.active {
+      border-color: var(--accent-cyan);
+      color: var(--bg-dark);
+      background: var(--accent-cyan);
+      text-shadow: none;
+    }
+
+    .nav-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .control-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+    }
+
+    .control-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .control-btn.active {
+      background: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+      color: var(--bg-dark);
+    }
+
+    .control-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Main content area */
+    main {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-top: 80px;
+    }
+
+    /* Slide container */
+    .slides-wrapper {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 3rem 6rem;
+      opacity: 0;
+      transform: translateX(100px);
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    .slide.prev {
+      transform: translateX(-100px);
+    }
+
+    .slide-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Slide number badge - hidden */
+    .slide-number {
+      display: none;
+    }
+
+    /* Typography */
+    .slide-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .slide-title.title-hero {
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .slide-title.title-plan {
+      font-size: clamp(3.5rem, 8vw, 6rem);
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .slide-subtitle {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent-orange);
+      margin: 2rem 0 1rem;
+      letter-spacing: 1px;
+    }
+
+    /* Lists */
+    ul, ol {
+      list-style: none;
+      margin: 1.5rem 0;
+    }
+
+    li {
+      position: relative;
+      padding-left: 2.5rem;
+      margin-bottom: 1rem;
+      font-size: 1.6rem;
+      font-weight: 400;
+    }
+
+    li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.6em;
+      width: 8px;
+      height: 8px;
+      background: var(--accent-cyan);
+      box-shadow: var(--glow-cyan);
+    }
+
+    ol {
+      counter-reset: item;
+    }
+
+    ol li::before {
+      content: counter(item);
+      counter-increment: item;
+      background: transparent;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 600;
+      width: auto;
+      height: auto;
+      top: 0;
+      box-shadow: none;
+    }
+
+    /* Code blocks */
+    pre {
+      background: var(--bg-code);
+      border: 1px solid var(--border-color);
+      border-left: 3px solid var(--accent-green);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      position: relative;
+    }
+
+    pre::before {
+      content: 'CODE';
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: var(--accent-green);
+      color: var(--bg-dark);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      letter-spacing: 1px;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+
+    /* Inline code */
+    p code, li code {
+      background: rgba(0, 255, 242, 0.1);
+      color: var(--accent-cyan);
+      padding: 0.2rem 0.6rem;
+      font-size: 0.95em;
+    }
+
+    /* Syntax highlighting */
+    .keyword { color: var(--accent-purple); }
+    .type { color: var(--accent-cyan); }
+    .function { color: var(--accent-orange); }
+    .string { color: var(--accent-green); }
+    .number { color: #ff7b72; }
+    .comment { color: var(--text-dim); font-style: italic; }
+
+    /* Cards / boxes */
+    .info-box {
+      background: rgba(0, 255, 242, 0.05);
+      border: 1px solid rgba(0, 255, 242, 0.2);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      position: relative;
+    }
+
+    .info-box.warning {
+      background: rgba(255, 107, 53, 0.05);
+      border-color: rgba(255, 107, 53, 0.3);
+    }
+
+    .info-box.success {
+      background: rgba(57, 255, 20, 0.05);
+      border-color: rgba(57, 255, 20, 0.3);
+    }
+
+    .info-box-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      letter-spacing: 2px;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-box p, .info-box li {
+      font-size: 1.4rem;
+    }
+
+    .info-box.warning .info-box-title { color: var(--accent-orange); }
+    .info-box.success .info-box-title { color: var(--accent-green); }
+
+    /* Grid layouts */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .two-col p {
+      font-size: 1.5rem;
+    }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    /* General paragraph */
+    .slide-content > p {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Image styling */
+    .slide-image {
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--border-color);
+      margin: 1rem 0;
+    }
+
+    .slide-image-container {
+      position: relative;
+    }
+
+    .image-credit {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-align: right;
+      margin-top: 0.25rem;
+    }
+
+    .image-credit a {
+      color: var(--text-dim);
+      text-decoration: underline;
+    }
+
+    /* Hero slide specific */
+    .hero-slide {
+      text-align: center;
+    }
+
+    .hero-slide .author {
+      font-size: 1.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-slide .linkedin {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      color: var(--accent-blue);
+    }
+
+    .hero-slide .linkedin a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .hero-slide .linkedin a:hover {
+      text-decoration: underline;
+    }
+
+    /* Timeline styling */
+    .timeline-item {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      align-items: flex-start;
+    }
+
+    .timeline-year {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      min-width: 70px;
+      text-shadow: var(--glow-cyan);
+    }
+
+    .timeline-content {
+      flex: 1;
+      padding-left: 1rem;
+      border-left: 2px solid var(--border-color);
+      font-size: 1.2rem;
+    }
+
+    /* Check list */
+    .checklist li::before {
+      content: '✓';
+      background: transparent;
+      color: var(--accent-green);
+      font-size: 1rem;
+      width: auto;
+      height: auto;
+      top: 0;
+      box-shadow: none;
+    }
+
+    /* Speaker notes */
+    .speaker-notes {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(180deg, transparent, var(--bg-dark) 20%);
+      padding: 2rem 6rem;
+      transform: translateY(100%);
+      transition: transform 0.4s ease;
+      z-index: 50;
+    }
+
+    .speaker-notes.visible {
+      transform: translateY(0);
+    }
+
+    .speaker-notes-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+    }
+
+    .speaker-notes-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-orange);
+      letter-spacing: 2px;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .speaker-notes-text {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Progress bar */
+    .progress-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--border-color);
+      z-index: 60;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+      box-shadow: var(--glow-cyan);
+      transition: width 0.3s ease;
+    }
+
+    /* Navigation arrows */
+    .nav-arrows {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      display: flex;
+      gap: 0.5rem;
+      z-index: 70;
+    }
+
+    .nav-arrow {
+      width: 50px;
+      height: 50px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .nav-arrow:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      background: rgba(0, 255, 242, 0.1);
+    }
+
+    .nav-arrow:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .nav-arrow svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* Slide counter */
+    .slide-counter {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      z-index: 70;
+    }
+
+    .slide-counter .current {
+      color: var(--accent-cyan);
+      font-size: 1.2rem;
+    }
+
+    /* Animations */
+    @keyframes fade-up {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .slide.active .slide-number { animation: fade-up 0.5s ease 0.1s both; }
+    .slide.active .slide-title { animation: fade-up 0.5s ease 0.2s both; }
+    .slide.active .slide-subtitle { animation: fade-up 0.5s ease 0.3s both; }
+    .slide.active ul, .slide.active ol, .slide.active p, .slide.active pre, .slide.active .info-box {
+      animation: fade-up 0.5s ease 0.4s both;
+    }
+
+    /* Glow animation for emphasis */
+    @keyframes glow-pulse {
+      0%, 100% { box-shadow: 0 0 5px var(--accent-cyan); }
+      50% { box-shadow: 0 0 20px var(--accent-cyan), 0 0 40px rgba(0, 255, 242, 0.3); }
+    }
+
+    .glow-effect {
+      animation: glow-pulse 2s ease-in-out infinite;
+    }
+
+    /* Keyboard hint */
+    .keyboard-hint {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      z-index: 70;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .key {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 0.25rem 0.5rem;
+      font-size: 0.7rem;
+    }
+
+    /* Slide menu dropdown */
+    .slide-menu {
+      position: relative;
+    }
+
+    .slide-menu-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      min-width: 280px;
+      max-height: 400px;
+      overflow-y: auto;
+      display: none;
+      z-index: 200;
+    }
+
+    .slide-menu-dropdown.visible {
+      display: block;
+    }
+
+    .slide-menu-item {
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .slide-menu-item:hover {
+      background: rgba(0, 255, 242, 0.1);
+    }
+
+    .slide-menu-item.active {
+      background: rgba(0, 255, 242, 0.2);
+      color: var(--accent-cyan);
+    }
+
+    .slide-menu-item .slide-menu-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+      margin-right: 0.75rem;
+    }
+
+    /* Info tooltip system */
+    .info-term {
+      position: relative;
+      border-bottom: 1px dashed var(--accent-cyan);
+      cursor: help;
+    }
+
+    .info-term::after {
+      content: 'ⓘ';
+      font-size: 0.7em;
+      margin-left: 0.3rem;
+      color: var(--accent-cyan);
+      vertical-align: super;
+    }
+
+    .info-tooltip {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card);
+      border: 1px solid var(--accent-cyan);
+      padding: 1rem 1.25rem;
+      min-width: 280px;
+      max-width: 400px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--text-secondary);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .info-tooltip::before {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 8px solid transparent;
+      border-top-color: var(--accent-cyan);
+    }
+
+    .info-term:hover .info-tooltip,
+    .info-term:focus .info-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .info-tooltip-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .slide {
+        padding: 2rem 3rem;
+      }
+
+      .two-col {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .three-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .slide {
+        padding: 1.5rem;
+      }
+
+      .nav-container {
+        padding: 0.5rem 1rem;
+      }
+
+      .keyboard-hint {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="circuit-bg"></div>
+  <div class="circuit-traces"></div>
+
+  <header>
+    <div class="nav-container">
+      <div class="logo">IoT<span>/ESP32</span></div>
+
+      <nav class="day-nav">
+        <button class="day-btn active" data-day="1">JOUR 1</button>
+        <button class="day-btn" data-day="2">JOUR 2</button>
+      </nav>
+
+      <div class="nav-controls">
+        <div class="slide-menu">
+          <button class="control-btn" id="menuBtn" title="Menu des slides">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="slide-menu-dropdown" id="slideMenu"></div>
+        </div>
+        <button class="control-btn" id="notesBtn" title="Notes orateur (N)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+        </button>
+        <button class="control-btn" id="fullscreenBtn" title="Plein écran (F)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <polyline points="9 21 3 21 3 15"></polyline>
+            <line x1="21" y1="3" x2="14" y2="10"></line>
+            <line x1="3" y1="21" x2="10" y2="14"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="slides-wrapper" id="slidesWrapper">
+      <!-- ==================== JOUR 1 ==================== -->
+
+      <!-- J1.01 - Titre -->
+      <div class="slide" data-day="1" data-note="INTRO (5 min) — Se présenter brièvement. Expliquer : J1 = théorie + simulateur Tinkercad, J2 = vrai matériel ESP32. Promesse : 'Avant la pause, vous aurez fait clignoter une LED dans le simulateur'. Vérifier que tout le monde a un navigateur web.">
+        <div class="slide-content hero-slide">
+          <span class="slide-number">J1.01</span>
+          <h1 class="slide-title title-hero">IoT — Jour 1</h1>
+          <p class="slide-subtitle" style="text-align: center; margin-top: -1rem;">Du terminal au microcontrôleur</p>
+          <p class="author">Sion GENDERS</p>
+          <p class="linkedin"><a href="https://www.linkedin.com/in/sion-gdrs/" target="_blank">linkedin.com/in/sion-gdrs</a></p>
+        </div>
+      </div>
+
+      <!-- J1.02 - Plan du jour -->
+      <div class="slide" data-day="1" data-note="PLAN (2 min) — Annoncer : 1h culture/histoire, puis 2h+ atelier sur Tinkercad. 3 exercices : LED, Bouton, Nightlight. Rassurer : pas besoin de matériel, on simule. Demander si questions sur le déroulé.">
+        <div class="slide-content" style="text-align: center;">
+          <span class="slide-number">J1.02</span>
+          <h1 class="slide-title title-plan">Plan du jour</h1>
+          <ol style="display: inline-block; text-align: left;">
+            <li>Histoire & définition IoT</li>
+            <li>L'IoT avant Internet</li>
+            <li>Bases du code Arduino</li>
+            <li>Découverte Tinkercad</li>
+            <li>Premier code : LED + Serial</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- J1.03 - C'est quoi IoT -->
+      <div class="slide" data-day="1" data-note="CONCEPT (5 min) — Insister : IoT = petits messages, contraintes (énergie, latence, fiabilité). IoT ≠ cloud obligatoire. Exemple concret : capteur de température qui envoie 1 octet toutes les 10 min. Demander : 'Qui a déjà vu un objet connecté chez soi ?'">
+        <div class="slide-content">
+          <span class="slide-number">J1.03</span>
+          <h1 class="slide-title">L'IoT en 4 concepts</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li>Des <strong>objets</strong> (capteurs / actionneurs)</li>
+                <li>Un <strong>lien de communication</strong> (filaire, radio, bus)</li>
+                <li>Des <strong>messages</strong> (petits, fréquents, robustes)</li>
+                <li>Un <strong>usage</strong> (mesurer, agir, superviser, automatiser)</li>
+              </ul>
+            </div>
+            <div class="slide-image-container">
+              <img src="https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=600&q=80" alt="Circuit board" class="slide-image">
+              <p class="image-credit">Photo: <a href="https://unsplash.com/@umbra_media" target="_blank">Umbra Media / Unsplash</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1.04 - Avant Internet -->
+      <div class="slide" data-day="1" data-note="HISTOIRE (5 min) — Phrase choc : 'Vous pensez Wi-Fi, moi je pense câbles et trames'. Expliquer SCADA = supervision industrielle. Les usines connectent des machines depuis 50 ans. Anecdote : les automates Modbus des années 70 tournent encore !">
+        <div class="slide-content">
+          <span class="slide-number">J1.04</span>
+          <h1 class="slide-title">Machines connectées avant Internet</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li>Série (UART/RS-232), bus terrain (ex : Modbus), bus embarqués (ex : CAN)</li>
+                <li>Objectif : supervision / commande / diagnostic</li>
+                <li>Monde industriel : <strong>automates</strong>, <strong>capteurs</strong>, <strong>actionneurs</strong>, <strong>SCADA</strong></li>
+              </ul>
+            </div>
+            <div class="slide-image-container">
+              <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&q=80" alt="Industrial automation" class="slide-image">
+              <p class="image-credit">Photo: <a href="https://unsplash.com/@thisisengineering" target="_blank">ThisisEngineering / Unsplash</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1.05 - Parallèle industrie/informatique -->
+      <div class="slide" data-day="1" data-note="PARALLÈLE (3 min) — Montrer que IT et industrie ont suivi le même chemin : centralisation → distribution → réseau. Ce cours fait le pont : on prend du hardware simple, du code simple, et on échange des messages. Transition vers timeline.">
+        <div class="slide-content">
+          <span class="slide-number">J1.05</span>
+          <h1 class="slide-title">Industrie & IT : même évolution</h1>
+          <div class="two-col">
+            <div>
+              <h3>Informatique</h3>
+              <p>mainframes → terminaux → réseaux</p>
+            </div>
+            <div>
+              <h3>Industrie</h3>
+              <p>automates → bus terrain → supervision</p>
+            </div>
+          </div>
+          <div class="info-box" style="margin-top: 2rem;">
+            <div class="info-box-title">💡 POINT CLÉ</div>
+            <p>Même logique : <strong>standardiser</strong> les échanges, rendre le système <strong>pilotable</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1.06 - Timeline complète -->
+      <div class="slide" data-day="1" data-note="TIMELINE (5 min) — Parcourir rapidement. Fun facts : le distributeur Coca était le 1er 'objet connecté'. XCoffee = webcam pour surveiller le café ! Punchline : 'Le mot IoT date de 1999, mais l'idée a 40 ans'. Transition : assez d'histoire, on code !">
+        <div class="slide-content">
+          <span class="slide-number">J1.06</span>
+          <h1 class="slide-title">Timeline IoT</h1>
+          <div class="two-col" style="align-items: start;">
+            <div>
+              <div class="timeline-item">
+                <span class="timeline-year">1960s</span>
+                <div class="timeline-content">RS‑232 (terminaux ↔ machines)</div>
+              </div>
+              <div class="timeline-item">
+                <span class="timeline-year">1970s</span>
+                <div class="timeline-content">Modbus (bus industriel)</div>
+              </div>
+              <div class="timeline-item">
+                <span class="timeline-year">1982</span>
+                <div class="timeline-content">Distributeur Coca‑Cola connecté</div>
+              </div>
+              <div class="timeline-item">
+                <span class="timeline-year">1983</span>
+                <div class="timeline-content">Telnet (terminal distant)</div>
+              </div>
+            </div>
+            <div>
+              <div class="timeline-item">
+                <span class="timeline-year">1986</span>
+                <div class="timeline-content">CAN bus (embarqué auto)</div>
+              </div>
+              <div class="timeline-item">
+                <span class="timeline-year">1991</span>
+                <div class="timeline-content">XCoffee (webcam café)</div>
+              </div>
+              <div class="timeline-item">
+                <span class="timeline-year">1999</span>
+                <div class="timeline-content">"Internet of Things" — le terme naît</div>
+              </div>
+              <div class="info-box success" style="margin-top: 1.5rem;">
+                <div class="info-box-title">🎯 À RETENIR</div>
+                <p>Le mot est récent, l'idée est vieille.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1.09 - Pourquoi IoT explose -->
+      <div class="slide" data-day="1" data-note="EXPLOSION IoT (3 min) — Expliquer pourquoi maintenant : les puces coûtent 2€, le Wi-Fi est partout, les batteries durent des mois. MQTT permet d'envoyer des messages en 50 octets. Transition : 'Voilà notre stack pour le cours'.">
+        <div class="slide-content">
+          <span class="slide-number">J1.09</span>
+          <h1 class="slide-title">Pourquoi l'IoT moderne explose ?</h1>
+          <div class="two-col">
+            <ul>
+              <li>Miniaturisation (MCU puissants & peu chers)</li>
+              <li>Sans fil (Wi‑Fi / BLE / LPWAN)</li>
+              <li>Batteries & low-power</li>
+              <li>Outils dev + écosystèmes (libs, cloud, MQTT)</li>
+            </ul>
+            <div class="slide-image-container">
+              <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80" alt="Microchip" class="slide-image">
+              <p class="image-credit">Photo: <a href="https://unsplash.com/@alexkixa" target="_blank">Alexandre Debiève / Unsplash</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1.10 - Notre stack -->
+      <div class="slide" data-day="1" data-note="STACK (3 min) — Rassurer : J1 = simulateur, pas de matériel à installer. J2 = ESP32 réel. Montrer l'image ESP32 : 'Demain vous aurez ça en main'. Le Serial Monitor sera notre outil de debug principal.">
+        <div class="slide-content">
+          <span class="slide-number">J1.10</span>
+          <h1 class="slide-title">Notre stack du cours</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li><strong>Jour 1 :</strong> Tinkercad (simulateur en ligne)</li>
+                <li><strong>Ensuite :</strong> ESP32 réel (Wi‑Fi, BLE, GPIO)</li>
+                <li><strong>Debug :</strong> Serial Monitor</li>
+                <li><strong>Communication :</strong> TCP/Telnet puis MQTT</li>
+              </ul>
+            </div>
+            <div class="slide-image-container">
+              <img src="https://images.unsplash.com/photo-1624969862644-791f3dc98927?w=600&q=80" alt="ESP32" class="slide-image">
+              <p class="image-credit">Photo: <a href="https://unsplash.com" target="_blank">Unsplash</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1.SYN1 - Structure Arduino -->
+      <div class="slide" data-day="1" data-note="STRUCTURE (5 min) — Comparer à un programme classique : setup() = initialisation (une seule fois), loop() = boucle infinie qui tourne en permanence. Analogie : setup = préparer la cuisine, loop = cuisiner en continu. Question : 'Pourquoi une boucle infinie ?' → l'Arduino ne s'arrête jamais.">
+        <div class="slide-content">
+          <span class="slide-number">J1.SYN1</span>
+          <h1 class="slide-title">Structure d'un programme Arduino</h1>
+          <div class="two-col">
+            <div>
+              <h3><span class="info-term">setup()<span class="info-tooltip"><span class="info-tooltip-title">setup()</span>Fonction appelée UNE SEULE FOIS au démarrage. Sert à configurer les pins, démarrer la communication série, etc.</span></span></h3>
+              <p>Exécuté <strong>une seule fois</strong> au démarrage</p>
+              <p>→ Configuration initiale</p>
+              <h3 style="margin-top: 2rem;"><span class="info-term">loop()<span class="info-tooltip"><span class="info-tooltip-title">loop()</span>Fonction qui se répète à l'INFINI après setup(). C'est ici que se passe le travail : lire capteurs, allumer LEDs, etc.</span></span></h3>
+              <p>Exécuté <strong>en boucle infinie</strong></p>
+              <p>→ Le cœur du programme</p>
+            </div>
+            <div>
+              <pre><code><span class="type">void</span> <span class="function">setup</span>() {
+  <span class="comment">// Une seule fois</span>
+  <span class="comment">// Ex: configurer un pin</span>
+}
+
+<span class="type">void</span> <span class="function">loop</span>() {
+  <span class="comment">// Se répète à l'infini</span>
+  <span class="comment">// Ex: lire, décider, agir</span>
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1.SYN2 - Variables -->
+      <div class="slide" data-day="1" data-note="VARIABLES (7 min) — Une variable = une boîte avec un nom et un type. int = nombre entier, bool = vrai/faux, unsigned long = grand nombre positif (pour millis). Montrer : déclarer puis utiliser. Piège débutant : oublier le type, ou utiliser int pour millis (overflow après 32 secondes !).">
+        <div class="slide-content">
+          <span class="slide-number">J1.SYN2</span>
+          <h1 class="slide-title">Variables : stocker des valeurs</h1>
+          <div class="two-col">
+            <div>
+              <p>Une <span class="info-term">variable<span class="info-tooltip"><span class="info-tooltip-title">Variable</span>Une "boîte" nommée qui contient une valeur. On peut lire ou modifier cette valeur pendant l'exécution.</span></span> = une boîte pour stocker une valeur</p>
+              <h3>Types courants</h3>
+              <ul>
+                <li><code>int</code> — nombre entier (-32768 à 32767)</li>
+                <li><code>bool</code> — vrai (<code>true</code>) ou faux (<code>false</code>)</li>
+                <li><code>unsigned long</code> — grand nombre positif</li>
+              </ul>
+            </div>
+            <div>
+              <pre><code><span class="comment">// Déclaration + valeur initiale</span>
+<span class="type">int</span> compteur = <span class="number">0</span>;
+<span class="type">bool</span> ledAllumee = <span class="keyword">false</span>;
+<span class="type">unsigned long</span> temps = <span class="number">0</span>;
+
+<span class="comment">// Utilisation</span>
+compteur = compteur + <span class="number">1</span>;
+ledAllumee = <span class="keyword">true</span>;
+temps = <span class="function">millis</span>();</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1.SYN3 - Conditions -->
+      <div class="slide" data-day="1" data-note="CONDITIONS (7 min) — if = 'si cette condition est vraie, faire ceci'. else = 'sinon, faire cela'. Opérateurs : == (égal), != (différent), < > <= >=. PIÈGE : = vs == ! Un seul = c'est l'affectation, deux == c'est la comparaison. Erreur très fréquente chez les débutants.">
+        <div class="slide-content">
+          <span class="slide-number">J1.SYN3</span>
+          <h1 class="slide-title">Conditions : prendre des décisions</h1>
+          <div class="two-col">
+            <div>
+              <p><code>if</code> = "si... alors"</p>
+              <p><code>else</code> = "sinon"</p>
+              <h3>Opérateurs de comparaison</h3>
+              <ul>
+                <li><code>==</code> égal</li>
+                <li><code>!=</code> différent</li>
+                <li><code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></li>
+              </ul>
+              <div class="info-box warning" style="margin-top: 1rem;">
+                <div class="info-box-title">⚠️ PIÈGE</div>
+                <p><code>=</code> affecte, <code>==</code> compare !</p>
+              </div>
+            </div>
+            <div>
+              <pre><code><span class="keyword">if</span> (compteur > <span class="number">10</span>) {
+  <span class="comment">// Si compteur dépasse 10</span>
+  Serial.<span class="function">println</span>(<span class="string">"Limite !"</span>);
+}
+
+<span class="keyword">if</span> (boutonAppuye == <span class="keyword">true</span>) {
+  ledAllumee = <span class="keyword">true</span>;
+} <span class="keyword">else</span> {
+  ledAllumee = <span class="keyword">false</span>;
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1.SYN4 - Fonctions Arduino -->
+      <div class="slide" data-day="1" data-note="FONCTIONS (7 min) — 4 fonctions essentielles à mémoriser. pinMode = configurer, digitalWrite = écrire, digitalRead = lire, millis = temps. Montrer le lien avec le hardware : pin 13 = la LED sur la carte. OUTPUT/INPUT = direction du courant. HIGH/LOW = 1/0 = allumé/éteint.">
+        <div class="slide-content">
+          <span class="slide-number">J1.SYN4</span>
+          <h1 class="slide-title">Fonctions Arduino essentielles</h1>
+          <div class="two-col">
+            <div>
+              <h3>Configuration</h3>
+              <pre style="margin-bottom: 1rem;"><code><span class="function">pinMode</span>(pin, OUTPUT); <span class="comment">// sortie</span>
+<span class="function">pinMode</span>(pin, INPUT);  <span class="comment">// entrée</span></code></pre>
+              <h3>Écriture / Lecture</h3>
+              <pre><code><span class="function">digitalWrite</span>(pin, HIGH); <span class="comment">// allumer</span>
+<span class="function">digitalWrite</span>(pin, LOW);  <span class="comment">// éteindre</span>
+<span class="type">int</span> val = <span class="function">digitalRead</span>(pin);</code></pre>
+            </div>
+            <div>
+              <h3>Temps</h3>
+              <pre style="margin-bottom: 1rem;"><code><span class="type">unsigned long</span> t = <span class="function">millis</span>();
+<span class="comment">// Millisecondes depuis le boot</span></code></pre>
+              <div class="info-box success">
+                <div class="info-box-title">📝 À RETENIR</div>
+                <ul style="margin: 0; font-size: 1.2rem;">
+                  <li><code>HIGH</code> = 1 = allumé</li>
+                  <li><code>LOW</code> = 0 = éteint</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1.11 - Tinkercad -->
+      <div class="slide" data-day="1" data-note="TINKERCAD (10 min) — Faire la démo en live : 1) tinkercad.com 2) Créer compte (ou login) 3) Circuits → Nouveau 4) Chercher Arduino UNO, glisser 5) Bouton Code → Texte. IMPORTANT : attendre que tout le monde ait l'écran avant de continuer. Problèmes fréquents : compte email non vérifié, navigateur bloquant.">
+        <div class="slide-content">
+          <span class="slide-number">J1.11</span>
+          <h1 class="slide-title">Tinkercad : prise en main</h1>
+          <div class="two-col">
+            <div>
+              <h3>Pourquoi simuler ?</h3>
+              <ul>
+                <li>Pas de matériel nécessaire</li>
+                <li>Expérimenter sans risque</li>
+                <li>Comprendre avant le hardware</li>
+              </ul>
+              <h3>Accès</h3>
+              <p><code>tinkercad.com</code> → Circuits</p>
+            </div>
+            <div>
+              <h3>Étapes</h3>
+              <ol>
+                <li>Créer un compte</li>
+                <li>Glisser un <strong>Arduino UNO</strong></li>
+                <li>Cliquer <strong>Code</strong> → mode <strong>Texte</strong></li>
+                <li><strong>Démarrer la simulation</strong></li>
+              </ol>
+              <div class="info-box" style="margin-top: 1rem;">
+                <div class="info-box-title">💡 ASTUCE</div>
+                <p>Cliquer sur l'Arduino pour ouvrir le Serial Monitor</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1.13 - Serial & communication -->
+      <div class="slide" data-day="1" data-note="SERIAL (5 min) — Expliquer : Serial = fil USB qui transporte du texte. Comme les vieux terminaux VT100. On tape, ça répond. Faire une blague : 'Bienvenue en 1983 !'. Montrer où est le Serial Monitor dans Tinkercad (clic sur Arduino).">
+        <div class="slide-content">
+          <span class="slide-number">J1.13</span>
+          <h1 class="slide-title">Du Serial au réseau</h1>
+          <div class="two-col">
+            <div>
+              <h3>Serial (local)</h3>
+              <ul>
+                <li>Un <strong>tuyau</strong> texte USB</li>
+                <li>On envoie des lignes, on lit des réponses</li>
+                <li>Même philosophie que les terminaux 1983</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Telnet / TCP (réseau)</h3>
+              <ul>
+                <li>Même principe, mais à distance</li>
+                <li>On fera ça plus tard sur ESP32</li>
+              </ul>
+              <div class="info-box" style="margin-top: 1rem;">
+                <div class="info-box-title">🖥️ DÉMO</div>
+                <p>Serial Monitor : baudrate, envoi de commande</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1.15 - Premier code Blink -->
+      <div class="slide" data-day="1" data-note="BLINK (15 min) — C'est l'Exo 1 ! Expliquer millis() vs delay() : delay() bloque TOUT, millis() permet de faire autre chose. Analogie : delay = dormir, millis = regarder sa montre. DÉMO : copier le code, lancer simulation, voir LED clignoter. Checkpoints : ✓ compilation OK ✓ LED clignote.">
+        <div class="slide-content">
+          <span class="slide-number">J1.15</span>
+          <h1 class="slide-title">Premier code : LED qui clignote</h1>
+          <p style="margin-bottom: 1rem;">Objectif : LED clignote <strong>sans delay()</strong> — Notions : <code>millis()</code>, période, état</p>
+          <pre><code><span class="keyword">const</span> <span class="type">int</span> LED_PIN = <span class="number">13</span>;       <span class="comment">// LED intégrée Arduino</span>
+<span class="keyword">const</span> <span class="type">unsigned long</span> PERIOD = <span class="number">500</span>;
+<span class="type">unsigned long</span> t0 = <span class="number">0</span>;
+<span class="type">bool</span> state = <span class="keyword">false</span>;
+
+<span class="type">void</span> <span class="function">setup</span>() {
+  <span class="function">pinMode</span>(LED_PIN, OUTPUT);
+}
+
+<span class="type">void</span> <span class="function">loop</span>() {
+  <span class="type">unsigned long</span> now = <span class="function">millis</span>();
+  <span class="keyword">if</span> (now - t0 >= PERIOD) {
+    t0 = now;
+    state = !state;
+    <span class="function">digitalWrite</span>(LED_PIN, state);
+  }
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- J1.16 - Ajouter du Serial -->
+      <div class="slide" data-day="1" data-note="SERIAL CODE (10 min) — Suite Exo 1 : ajouter Serial.begin(9600) dans setup. Attention : Tinkercad = 9600 baud par défaut ! Montrer Serial.println('Boot OK'). Faire afficher 'LED=ON' / 'LED=OFF' à chaque changement. Piège fréquent : oublier le \\n ou mauvais baudrate.">
+        <div class="slide-content">
+          <span class="slide-number">J1.16</span>
+          <h1 class="slide-title">Communiquer via Serial</h1>
+          <p style="margin-bottom: 1rem;">Objectif : "j'écris dans le terminal"</p>
+          <pre><code>Serial.<span class="function">begin</span>(<span class="number">115200</span>);
+Serial.<span class="function">println</span>(<span class="string">"Boot OK"</span>);</code></pre>
+          <div class="info-box" style="margin-top: 1.5rem;">
+            <div class="info-box-title">📝 TP</div>
+            <ul style="margin: 0;">
+              <li>Afficher un heartbeat ("tick" toutes les secondes)</li>
+              <li>Afficher <code>LED=ON/OFF</code> à chaque changement</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1.17 - Mini protocole texte -->
+      <div class="slide" data-day="1" data-note="COMMANDES (15 min) — Fin Exo 1 : lire Serial avec Serial.readStringUntil('\\n'), faire .trim(), comparer avec 'ON', 'OFF'. Montrer le pattern : if (line == 'ON') { ... }. Challenge : ajouter 'BLINK 5' qui fait 5 clignotements. Checkpoints : ✓ ON/OFF immédiats ✓ BLINK n fonctionne.">
+        <div class="slide-content">
+          <span class="slide-number">J1.17</span>
+          <h1 class="slide-title">Protocole commande-réponse</h1>
+          <div class="two-col">
+            <div>
+              <p>On tape : <code>STATUS</code></p>
+              <p>L'Arduino répond : <code>LED=ON</code> ou <code>LED=OFF</code></p>
+              <h3>Pseudo-code</h3>
+              <p>buffer ligne → trim → if equals "STATUS"</p>
+            </div>
+            <div class="info-box">
+              <div class="info-box-title">📝 TP</div>
+              <ul style="margin: 0;">
+                <li>Lire une ligne depuis Serial</li>
+                <li>Comparer et répondre</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1.18 - Récap -->
+      <div class="slide" data-day="1" data-note="RÉCAP (5 min) — Tour de table rapide : 'Qui a réussi à faire clignoter ?' 'Qui a fait ON/OFF ?'. Annoncer J2 : on passe au vrai matériel + bouton + anti-rebond. Exercices facultatifs pour ceux qui veulent approfondir.">
+        <div class="slide-content">
+          <span class="slide-number">J1.18</span>
+          <h1 class="slide-title">Récap & exercices</h1>
+          <div class="two-col">
+            <div>
+              <h3>Acquis du jour</h3>
+              <ul>
+                <li><code>millis()</code> au lieu de <code>delay()</code></li>
+                <li>Serial = notre terminal de debug</li>
+                <li>Commande → réponse</li>
+              </ul>
+              <h3>Demain (J2)</h3>
+              <p>ESP32 réel + bouton + anti-rebond</p>
+            </div>
+            <div class="info-box success">
+              <div class="info-box-title">🎯 EXERCICES RESTANTS</div>
+              <ul style="margin: 0;">
+                <li><strong>Exo 2 :</strong> Bouton + anti-rebond</li>
+                <li><strong>Exo 3 :</strong> Nightlight (potentiomètre)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1 - Exo 2 Bouton -->
+      <div class="slide" data-day="1" data-note="EXO 2 (45-60 min) — Ajouter un bouton en INPUT_PULLUP. Expliquer : repos = HIGH, appuyé = LOW (inversé !). PROBLÈME : sans debounce, un appui = 10 événements. Montrer le spam dans Serial. Introduire l'anti-rebond : on attend 40ms de stabilité avant de valider.">
+        <div class="slide-content">
+          <span class="slide-number">J1.EX2</span>
+          <h1 class="slide-title">Exo 2 : Bouton anti-rebond</h1>
+          <div class="two-col">
+            <div>
+              <h3>Mission</h3>
+              <ul>
+                <li>Bouton en <code>INPUT_PULLUP</code></li>
+                <li>Anti-rebond : stable 40ms avant validation</li>
+                <li>Appui court → toggle LED</li>
+                <li>Appui long (≥1200ms) → mode clignotement</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Checkpoints</h3>
+              <ul class="checklist">
+                <li>1 appui = 1 seul événement</li>
+                <li>Appui long détecté proprement</li>
+                <li>Code reste réactif (pas de delay)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J1 - Exo 3 Nightlight -->
+      <div class="slide" data-day="1" data-note="EXO 3 (45-60 min) — Utiliser un potentiomètre pour simuler la luminosité. Expliquer analogRead() : valeur 0-1023. Définir seuil ON (400) et seuil OFF (600) = hystérésis pour éviter le clignotement proche du seuil. Challenge : ajouter une LED qui s'allume progressivement.">
+        <div class="slide-content">
+          <span class="slide-number">J1.EX3</span>
+          <h1 class="slide-title">Exo 3 : Nightlight</h1>
+          <div class="two-col">
+            <div>
+              <h3>Mission</h3>
+              <ul>
+                <li>Potentiomètre = luminosité simulée</li>
+                <li><code>analogRead()</code> → valeur 0-1023</li>
+                <li>Seuil ON : 400 / Seuil OFF : 600</li>
+                <li>Hystérésis = pas de clignotement</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Checkpoints</h3>
+              <ul class="checklist">
+                <li>Valeur bouge quand je tourne</li>
+                <li>LED s'allume dans le "sombre"</li>
+                <li>Pas de clignotement au seuil</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== JOUR 2 ==================== -->
+
+      <!-- J2.01 - Titre -->
+      <div class="slide" data-day="2" data-note="INTRO J2 (5 min) — Aujourd'hui : le VRAI matériel ! Matin = refaire les exos J1 sur ESP32. Après-midi = feu tricolore + mode ambulance. Vérifier que tout le monde a : ESP32, câble USB, LEDs, résistances, bouton, breadboard.">
+        <div class="slide-content hero-slide">
+          <span class="slide-number">J2.01</span>
+          <h1 class="slide-title title-hero">IoT — Jour 2</h1>
+          <p class="slide-subtitle" style="text-align: center; margin-top: -1rem;">Du simulateur au réel</p>
+          <p class="author">Sion GENDERS</p>
+          <p class="linkedin"><a href="https://www.linkedin.com/in/sion-gdrs/" target="_blank">linkedin.com/in/sion-gdrs</a></p>
+        </div>
+      </div>
+
+      <!-- J2.02 - Rappel J1 -->
+      <div class="slide" data-day="2" data-note="RAPPEL (5 min) — Quiz flash : 'C'est quoi millis() ?' 'Pourquoi INPUT_PULLUP ?'. Démo confiance : brancher ESP32, flasher le blink de J1 en 30 sec. Montrer que ça marche pareil qu'en simulation. Différence : Serial à 115200 sur ESP32 !">
+        <div class="slide-content">
+          <span class="slide-number">J2.02</span>
+          <h1 class="slide-title">Rappel J1</h1>
+          <ul>
+            <li><code>millis()</code> > <code>delay()</code></li>
+            <li>Serial Monitor = terminal</li>
+            <li>On sait flasher / débugger</li>
+          </ul>
+          <div class="info-box" style="margin-top: 2rem;">
+            <div class="info-box-title">🖥️ DÉMO RAPIDE</div>
+            <p>Flasher le code J1 en 20 secondes → effet confiance</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2.03 - GPIO -->
+      <div class="slide" data-day="2" data-note="GPIO (10 min) — Dessiner au tableau : GPIO = General Purpose Input/Output. Sortie = on pousse du courant (LED). Entrée = on lit une tension. PIÈGE : entrée sans pull-up/down = 'antenne' qui capte du bruit. Faire la démo : fil en l'air → valeur qui saute.">
+        <div class="slide-content">
+          <span class="slide-number">J2.03</span>
+          <h1 class="slide-title">GPIO : entrée vs sortie</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li><strong>Sortie :</strong> on impose 0/1 (LED)</li>
+                <li><strong>Entrée :</strong> on lit 0/1 (bouton, capteur digital)</li>
+              </ul>
+              <div class="info-box warning" style="margin-top: 1.5rem;">
+                <div class="info-box-title">⚠️ PIÈGE</div>
+                <p>Entrée "flottante" si pas de pull-up/down = antenne !</p>
+              </div>
+            </div>
+            <div class="slide-image-container">
+              <img src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=600&q=80" alt="Electronics" class="slide-image">
+              <p class="image-credit">Photo: <a href="https://unsplash.com/@robinsongreig" target="_blank">Robinson Greig / Unsplash</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2.04 - Pull-up / Pull-down -->
+      <div class="slide" data-day="2" data-note="PULL-UP (10 min) — Dessiner le schéma : résistance qui 'tire' vers le haut (3.3V). Quand bouton appuyé → court-circuit vers GND → LOW. Logique INVERSÉE ! INPUT_PULLUP = la résistance est dans la puce, pas besoin de composant externe. ESP32 = 3.3V, pas 5V !">
+        <div class="slide-content">
+          <span class="slide-number">J2.04</span>
+          <h1 class="slide-title">Résistances pull-up & pull-down</h1>
+          <ul>
+            <li>Pull-up interne : <code>INPUT_PULLUP</code></li>
+            <li>Bouton vers GND → logique inversée (appuyé = LOW)</li>
+            <li>Pourquoi : état stable quand rien n'est appuyé</li>
+          </ul>
+          <div class="info-box success" style="margin-top: 2rem;">
+            <div class="info-box-title">💡 CONSEIL</div>
+            <p>On préfère pull-up interne : moins de composants externes</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2.05 - Schéma câblage -->
+      <div class="slide" data-day="2" data-note="CÂBLAGE (15 min) — Faire câbler en live avec les apprenants. LED : patte longue (+) → GPIO via résistance 220Ω → GND. Bouton : une patte → GPIO, autre patte → GND. ERREURS FRÉQUENTES : LED à l'envers (ne grille pas, mais ne s'allume pas), mauvais GPIO, résistance oubliée.">
+        <div class="slide-content">
+          <span class="slide-number">J2.05</span>
+          <h1 class="slide-title">Schéma de câblage</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li>LED + résistance en série</li>
+                <li>Bouton entre GPIO et GND</li>
+                <li>GPIO bouton en <code>INPUT_PULLUP</code></li>
+              </ul>
+            </div>
+            <div class="slide-image-container">
+              <img src="https://images.unsplash.com/photo-1608564697071-ddf911d81370?w=600&q=80" alt="Breadboard wiring" class="slide-image">
+              <p class="image-credit">Photo: <a href="https://unsplash.com/@harrisonfitts" target="_blank">Harrison Fitts / Unsplash</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2.06 - Problème rebonds -->
+      <div class="slide" data-day="2" data-note="REBONDS (10 min) — DÉMO CHOC : code sans debounce, Serial.println à chaque changement → SPAM de lignes pour 1 appui ! Expliquer : contact mécanique = vibrations = plusieurs transitions en quelques ms. Solution : ignorer les changements pendant 30-50ms.">
+        <div class="slide-content">
+          <span class="slide-number">J2.06</span>
+          <h1 class="slide-title">Rebonds : le problème</h1>
+          <ul>
+            <li>Un bouton ne fait pas "clic" → il fait "clicclicclic"</li>
+            <li>Sans filtrage : plusieurs appuis détectés</li>
+            <li>Solution : anti-rebond (temps + état stable)</li>
+          </ul>
+          <div class="info-box warning" style="margin-top: 2rem;">
+            <div class="info-box-title">🔬 DÉMO</div>
+            <p>Log Serial brut sans debounce = spam de transitions</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2.07 - Méthode anti-rebond -->
+      <div class="slide" data-day="2" data-note="ALGO DEBOUNCE (10 min) — Expliquer l'algo : 1) lire l'état brut 2) si différent du précédent → reset timer 3) si timer > 30ms ET état différent du stable → valider. Montrer le pseudo-code. Valeur 30-50ms = bon compromis. Trop court = rebonds passent, trop long = lag perceptible.">
+        <div class="slide-content">
+          <span class="slide-number">J2.07</span>
+          <h1 class="slide-title">Anti-rebond : le principe</h1>
+          <ol>
+            <li>On lit l'état</li>
+            <li>Si changement → on démarre un timer</li>
+            <li>Si stable pendant X ms → on valide</li>
+          </ol>
+          <pre style="margin-top: 1.5rem;"><code><span class="keyword">const</span> <span class="type">unsigned long</span> DEBOUNCE_MS = <span class="number">30</span>; <span class="comment">// à ajuster</span></code></pre>
+        </div>
+      </div>
+
+      <!-- J2.08 - Architecture loop -->
+      <div class="slide" data-day="2" data-note="ARCHITECTURE (5 min) — Montrer le pattern : loop() appelle des fonctions spécialisées. Chaque fonction fait UNE chose et retourne vite. Jamais de while(true) ou delay() long dans une fonction. C'est la base pour gérer plusieurs tâches en parallèle.">
+        <div class="slide-content">
+          <span class="slide-number">J2.08</span>
+          <h1 class="slide-title">Structure d'une loop réactive</h1>
+          <pre><code><span class="type">void</span> <span class="function">loop</span>() {
+  <span class="function">readButton</span>();         <span class="comment">// lecture + debounce</span>
+  <span class="function">handleSerialCommands</span>();  <span class="comment">// commandes texte</span>
+  <span class="function">updateLed</span>();          <span class="comment">// mise à jour sortie</span>
+  <span class="function">telemetry</span>();          <span class="comment">// option : logs périodiques</span>
+}</code></pre>
+          <div class="info-box" style="margin-top: 2rem;">
+            <div class="info-box-title">🎯 PATTERN</div>
+            <p>Chaque fonction fait UNE chose, sans bloquer</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2.09 - TP1 LED par bouton -->
+      <div class="slide" data-day="2" data-note="TP BOUTON (30 min) — Les apprenants câblent et codent. Passer dans les rangs. Erreurs courantes : bouton vers 3.3V au lieu de GND, oubli INPUT_PULLUP, debounce trop court (10ms). Checkpoint : 1 appui = 1 toggle, pas de double.">
+        <div class="slide-content">
+          <span class="slide-number">J2.09</span>
+          <h1 class="slide-title">TP : Bouton → LED</h1>
+          <p style="margin-bottom: 1rem;"><strong>Objectif :</strong> À chaque appui validé → inversion LED</p>
+          <ol>
+            <li>Câbler bouton + LED</li>
+            <li>Lire bouton avec <code>INPUT_PULLUP</code></li>
+            <li>Ajouter anti-rebond</li>
+            <li><code>onPress()</code> → <code>ledState = !ledState</code></li>
+          </ol>
+          <pre style="margin-top: 1rem;"><code><span class="comment">// Logique inversée avec pull-up</span>
+<span class="type">bool</span> pressed = (<span class="function">digitalRead</span>(BTN_PIN) == LOW);</code></pre>
+        </div>
+      </div>
+
+      <!-- J2.10 - TP2 Commandes série -->
+      <div class="slide" data-day="2" data-note="TP SERIAL (20 min) — Parser = découper la ligne et reconnaître les mots. Même philosophie RS‑232 / Telnet : texte clair, humain. Erreurs fréquentes : oubli du trim(), comparaison avec == au lieu de equals (pas en Arduino mais en Java), \\r\\n vs \\n.">
+        <div class="slide-content">
+          <span class="slide-number">J2.10</span>
+          <h1 class="slide-title">TP : Commandes Serial</h1>
+          <div class="two-col">
+            <div>
+              <h3>Commandes</h3>
+              <ul>
+                <li><code>ON</code> → LED ON</li>
+                <li><code>OFF</code> → LED OFF</li>
+                <li><code>STATUS</code> → LED + bouton</li>
+              </ul>
+            </div>
+            <div class="info-box">
+              <div class="info-box-title">📝 TP</div>
+              <ul style="margin: 0;">
+                <li>Parser une ligne simple</li>
+                <li>Répondre par une ligne lisible</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2.11 - TP3 Event log -->
+      <div class="slide" data-day="2" data-note="EVENT LOG (10 min) — Prépare la télémétrie MQTT. Le format EVENT:xxx sera réutilisé plus tard. Montrer qu'on peut filtrer les logs avec ce préfixe. Bonus : ajouter un timestamp avec millis().">
+        <div class="slide-content">
+          <span class="slide-number">J2.11</span>
+          <h1 class="slide-title">TP : Event Log</h1>
+          <ul>
+            <li>Quand bouton press → <code>EVENT:BTN_PRESS</code></li>
+            <li>Quand LED change → <code>EVENT:LED=ON/OFF</code></li>
+          </ul>
+          <div class="info-box success" style="margin-top: 2rem;">
+            <div class="info-box-title">🚀 OBJECTIF</div>
+            <p>Préparer mentalement la télémétrie (MQTT plus tard)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2.12 - Débrief bugs -->
+      <div class="slide" data-day="2" data-note="Montrer une checklist debug rapide.">
+        <div class="slide-content">
+          <span class="slide-number">J2.12</span>
+          <h1 class="slide-title">Débrief bugs fréquents</h1>
+          <ul>
+            <li>Mauvais GPIO (LED intégrée pas sur le pin attendu)</li>
+            <li>Oubli résistance LED</li>
+            <li>Bouton câblé sur 3.3V au lieu de GND avec pull-up</li>
+            <li>Baudrate pas aligné</li>
+            <li>Rebonds non gérés → double toggle</li>
+          </ul>
+          <div class="info-box warning" style="margin-top: 1.5rem;">
+            <div class="info-box-title">🔧 CHECKLIST DEBUG</div>
+            <p>GPIO • Câblage • Baudrate • Debounce</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2.13 - Mini-challenges -->
+      <div class="slide" data-day="2" data-note="">
+        <div class="slide-content">
+          <span class="slide-number">J2.13</span>
+          <h1 class="slide-title">Mini-challenges (si avance)</h1>
+          <ol>
+            <li>Double clic = LED clignote 3 fois</li>
+            <li>Appui long (>800ms) = LED OFF</li>
+            <li><code>HELP</code> affiche la liste des commandes</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- J2 - Exo 4 Feu tricolore -->
+      <div class="slide" data-day="2" data-note="FEU TRICOLORE (60-90 min) — APRÈS-MIDI. 3 LEDs : rouge, orange, verte. Cycle : Vert 6s → Orange 2s → Rouge 6s → boucle. IMPORTANT : pas de delay(6000) ! Machine à états : enum State {GREEN, YELLOW, RED}. Variable stateSince pour savoir depuis quand on est dans l'état.">
+        <div class="slide-content">
+          <span class="slide-number">J2.EX4</span>
+          <h1 class="slide-title">Exo 4 : Feu tricolore</h1>
+          <div class="two-col">
+            <div>
+              <h3>Cycle normal</h3>
+              <ul>
+                <li>🟢 Vert : 6 secondes</li>
+                <li>🟠 Orange : 2 secondes</li>
+                <li>🔴 Rouge : 6 secondes</li>
+              </ul>
+              <h3>Contrainte</h3>
+              <p>Pas de <code>delay()</code> bloquant !</p>
+            </div>
+            <div>
+              <h3>Machine à états</h3>
+              <pre style="font-size: 0.9rem;"><code><span class="keyword">enum</span> State { GREEN, YELLOW, RED };
+State state = GREEN;
+<span class="type">unsigned long</span> stateSince = <span class="number">0</span>;</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2 - Exo 5 Ambulance -->
+      <div class="slide" data-day="2" data-note="AMBULANCE (60-90 min) — Mode priorité déclenché par bouton ou commande 'AMB ON'. Quand activé : si vert → orange 1s → rouge. Reste rouge tant qu'ambulance active. Désactivation : délai 1s sécurité puis retour vert. Ajouter états AMB_TRANSITION et AMB_LOCK.">
+        <div class="slide-content">
+          <span class="slide-number">J2.EX5</span>
+          <h1 class="slide-title">Exo 5 : Mode ambulance</h1>
+          <div class="two-col">
+            <div>
+              <h3>Déclenchement</h3>
+              <ul>
+                <li>Bouton "ambulance" ou</li>
+                <li>Commande <code>AMB ON</code> / <code>AMB OFF</code></li>
+              </ul>
+              <h3>Comportement</h3>
+              <ol>
+                <li>Si vert → orange 1s → rouge</li>
+                <li>Rouge fixe tant qu'actif</li>
+                <li>Désactivation : 1s puis vert</li>
+              </ol>
+            </div>
+            <div>
+              <h3>États supplémentaires</h3>
+              <pre style="font-size: 0.9rem;"><code><span class="keyword">enum</span> State {
+  GREEN, YELLOW, RED,
+  AMB_TRANSITION,
+  AMB_LOCK
+};</code></pre>
+              <div class="info-box warning" style="margin-top: 1rem;">
+                <div class="info-box-title">⚠️ SÉCURITÉ</div>
+                <p>Jamais de passage direct rouge → vert !</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2.14 - Récap & teaser J3 -->
+      <div class="slide" data-day="2" data-note="RÉCAP J2 (10 min) — Tour de table : 'Qui a fait marcher le feu ?' 'Qui a fait l'ambulance ?'. Rappeler les acquis : GPIO, pull-up, debounce, machine à états. Annoncer J3 : capteurs analogiques, bruit, filtrage. Collecter les livrables.">
+        <div class="slide-content">
+          <span class="slide-number">J2.14</span>
+          <h1 class="slide-title">Récap & livrables</h1>
+          <div class="two-col">
+            <div>
+              <h3>Acquis J2</h3>
+              <ul>
+                <li>GPIO réel sur ESP32</li>
+                <li>Anti-rebond robuste</li>
+                <li>Machine à états</li>
+              </ul>
+              <h3>Prochain cours (J3)</h3>
+              <p>Capteurs analogiques, bruit & filtrage</p>
+            </div>
+            <div class="info-box success">
+              <div class="info-box-title">📦 LIVRABLES</div>
+              <ul style="margin: 0;">
+                <li><code>J2_Button_Debounce.ino</code></li>
+                <li><code>J2_Feu_Tricolore.ino</code></li>
+                <li>README avec schéma + captures</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Speaker notes panel -->
+  <div class="speaker-notes" id="speakerNotes">
+    <div class="speaker-notes-content">
+      <div class="speaker-notes-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+        </svg>
+        NOTES ORATEUR
+      </div>
+      <p class="speaker-notes-text" id="notesText">Aucune note pour cette slide.</p>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- Navigation arrows -->
+  <div class="nav-arrows">
+    <button class="nav-arrow" id="prevBtn" title="Slide précédente (←)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+    <button class="nav-arrow" id="nextBtn" title="Slide suivante (→)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Slide counter -->
+  <div class="slide-counter">
+    <span class="current" id="currentSlide">1</span> / <span id="totalSlides">32</span>
+  </div>
+
+  <!-- Keyboard hint -->
+  <div class="keyboard-hint">
+    <span class="key">←</span><span class="key">→</span> naviguer
+    <span class="key">N</span> notes
+    <span class="key">F</span> plein écran
+  </div>
+
+  <script>
+    // State
+    let currentDay = 1;
+    let currentSlideIndex = 0;
+    let notesVisible = false;
+    let slides = [];
+    let filteredSlides = [];
+
+    // DOM elements
+    const slidesWrapper = document.getElementById('slidesWrapper');
+    const dayBtns = document.querySelectorAll('.day-btn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const notesBtn = document.getElementById('notesBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const menuBtn = document.getElementById('menuBtn');
+    const slideMenu = document.getElementById('slideMenu');
+    const speakerNotes = document.getElementById('speakerNotes');
+    const notesText = document.getElementById('notesText');
+    const progressBar = document.getElementById('progressBar');
+    const currentSlideEl = document.getElementById('currentSlide');
+    const totalSlidesEl = document.getElementById('totalSlides');
+
+    // Initialize
+    function init() {
+      slides = Array.from(document.querySelectorAll('.slide'));
+      filterSlidesByDay(currentDay);
+      updateSlide();
+      buildSlideMenu();
+    }
+
+    // Filter slides by day
+    function filterSlidesByDay(day) {
+      currentDay = day;
+      filteredSlides = slides.filter(s => parseInt(s.dataset.day) === day);
+      currentSlideIndex = 0;
+
+      // Update day buttons
+      dayBtns.forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.day) === day);
+      });
+
+      // Hide all slides first
+      slides.forEach(s => {
+        s.classList.remove('active', 'prev');
+      });
+
+      buildSlideMenu();
+      updateSlide();
+    }
+
+    // Build slide menu
+    function buildSlideMenu() {
+      slideMenu.innerHTML = '';
+      filteredSlides.forEach((slide, index) => {
+        const number = slide.querySelector('.slide-number')?.textContent || '';
+        const title = slide.querySelector('.slide-title')?.textContent?.substring(0, 40) || '';
+
+        const item = document.createElement('div');
+        item.className = 'slide-menu-item' + (index === currentSlideIndex ? ' active' : '');
+        item.innerHTML = `<span class="slide-menu-number">${number}</span>${title}`;
+        item.addEventListener('click', () => {
+          goToSlide(index);
+          slideMenu.classList.remove('visible');
+        });
+        slideMenu.appendChild(item);
+      });
+    }
+
+    // Update current slide
+    function updateSlide() {
+      // Update all slides
+      filteredSlides.forEach((slide, index) => {
+        slide.classList.remove('active', 'prev');
+        if (index === currentSlideIndex) {
+          slide.classList.add('active');
+        } else if (index < currentSlideIndex) {
+          slide.classList.add('prev');
+        }
+      });
+
+      // Update notes
+      const currentSlide = filteredSlides[currentSlideIndex];
+      const note = currentSlide?.dataset.note || '';
+      notesText.textContent = note || 'Aucune note pour cette slide.';
+
+      // Update progress
+      const progress = ((currentSlideIndex + 1) / filteredSlides.length) * 100;
+      progressBar.style.width = `${progress}%`;
+
+      // Update counter
+      currentSlideEl.textContent = currentSlideIndex + 1;
+      totalSlidesEl.textContent = filteredSlides.length;
+
+      // Update nav buttons
+      prevBtn.disabled = currentSlideIndex === 0;
+      nextBtn.disabled = currentSlideIndex === filteredSlides.length - 1;
+
+      // Update menu active state
+      document.querySelectorAll('.slide-menu-item').forEach((item, i) => {
+        item.classList.toggle('active', i === currentSlideIndex);
+      });
+    }
+
+    // Navigation
+    function nextSlide() {
+      if (currentSlideIndex < filteredSlides.length - 1) {
+        currentSlideIndex++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlideIndex > 0) {
+        currentSlideIndex--;
+        updateSlide();
+      }
+    }
+
+    function goToSlide(index) {
+      if (index >= 0 && index < filteredSlides.length) {
+        currentSlideIndex = index;
+        updateSlide();
+      }
+    }
+
+    // Toggle notes
+    function toggleNotes() {
+      notesVisible = !notesVisible;
+      speakerNotes.classList.toggle('visible', notesVisible);
+      notesBtn.classList.toggle('active', notesVisible);
+    }
+
+    // Toggle fullscreen
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+        fullscreenBtn.classList.add('active');
+      } else {
+        document.exitFullscreen();
+        fullscreenBtn.classList.remove('active');
+      }
+    }
+
+    // Event listeners
+    dayBtns.forEach(btn => {
+      btn.addEventListener('click', () => filterSlidesByDay(parseInt(btn.dataset.day)));
+    });
+
+    prevBtn.addEventListener('click', prevSlide);
+    nextBtn.addEventListener('click', nextSlide);
+    notesBtn.addEventListener('click', toggleNotes);
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+    menuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      slideMenu.classList.toggle('visible');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!slideMenu.contains(e.target) && e.target !== menuBtn) {
+        slideMenu.classList.remove('visible');
+      }
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      switch(e.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+        case ' ':
+          e.preventDefault();
+          nextSlide();
+          break;
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          e.preventDefault();
+          prevSlide();
+          break;
+        case 'n':
+        case 'N':
+          toggleNotes();
+          break;
+        case 'f':
+        case 'F':
+          toggleFullscreen();
+          break;
+        case 'Escape':
+          slideMenu.classList.remove('visible');
+          break;
+        case '1':
+          filterSlidesByDay(1);
+          break;
+        case '2':
+          filterSlidesByDay(2);
+          break;
+      }
+    });
+
+    // Touch support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    slidesWrapper.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    slidesWrapper.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) nextSlide();
+        else prevSlide();
+      }
+    }, { passive: true });
+
+    // Fullscreen change handler
+    document.addEventListener('fullscreenchange', () => {
+      fullscreenBtn.classList.toggle('active', !!document.fullscreenElement);
+    });
+
+    // Initialize
+    init();
+  </script>
+</body>
+</html>

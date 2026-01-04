@@ -1,0 +1,16 @@
+# Plans folder (internal use only)
+plans/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Node modules (if any)
+node_modules/

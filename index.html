@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>IoT Lessons</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js@5.0.4/dist/reveal.css" />
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js@5.0.4/dist/theme/white.css" />
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js@5.0.4/plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slides.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Spline+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap"
+    />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section
+          data-markdown
+          data-separator="^---$"
+          data-separator-vertical="^----$"
+          data-separator-notes="^Note:"
+          data-charset="utf-8"
+        ></section>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/reveal.js@5.0.4/dist/reveal.js"></script>
+    <script src="https://unpkg.com/reveal.js@5.0.4/plugin/markdown/markdown.js"></script>
+    <script src="https://unpkg.com/reveal.js@5.0.4/plugin/notes/notes.js"></script>
+    <script src="https://unpkg.com/reveal.js@5.0.4/plugin/highlight/highlight.js"></script>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const lesson = params.get("lesson") || "intro-iot";
+      const lessonPath = `lessons/${lesson}.md`;
+
+      const target = document.querySelector("[data-markdown]");
+      target.setAttribute("data-markdown", lessonPath);
+
+      Reveal.initialize({
+        hash: true,
+        slideNumber: true,
+        center: false,
+        transition: "fade",
+        plugins: [RevealMarkdown, RevealNotes, RevealHighlight],
+        markdown: {
+          smartypants: true
+        }
+      });
+    </script>
+  </body>
+</html>
