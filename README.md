@@ -9,13 +9,26 @@ Slides de formation IoT couvrant les bases Arduino/ESP32, GPIO, capteurs et comm
 
 ## Utilisation
 
-Ouvrir `slides/index.html` dans un navigateur.
+### Local (recommandé)
+Lancer un serveur local pour activer le panneau TP (chargement des énoncés).
+
+- Linux/macOS : `scripts/serve.sh`
+- Windows : `scripts/serve.bat`
+
+Puis ouvrir `http://localhost:8000/`.
 
 ### Navigation
 - `←` `→` : slides précédente/suivante
 - `N` : notes orateur
 - `F` : plein écran
-- `1` `2` : accès direct Jour 1/2
+- `T` : panneau TP
+- `A` : mode assistance
+- `1` `2` `3` : accès direct Jour 1/2/J2-Alt
+
+### GitHub Pages
+1. `Settings → Pages` → Source: `main` / `(root)`
+2. Ajouter le fichier `.nojekyll` (déjà présent) pour servir les `.md` bruts.
+3. Ouvrir `https://<user>.github.io/<repo>/slides/`
 
 ## Auteur
 

@@ -1,0 +1,12 @@
+{
+  "name": "server-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node src/index.js"
+  },
+  "dependencies": {
+    "mqtt": "^5.3.5",
+    "ws": "^8.15.1"
+  }
+}

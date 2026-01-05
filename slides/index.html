@@ -186,6 +186,15 @@
       height: 40px;
     }
 
+    .control-btn.label {
+      width: auto;
+      min-width: 44px;
+      padding: 0.45rem 0.8rem;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+    }
+
     .control-btn:hover {
       border-color: var(--accent-cyan);
       color: var(--accent-cyan);
@@ -195,6 +204,11 @@
       background: var(--accent-cyan);
       border-color: var(--accent-cyan);
       color: var(--bg-dark);
+    }
+
+    .control-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
     }
 
     .control-btn svg {
@@ -574,6 +588,106 @@
       line-height: 1.6;
     }
 
+    /* TP panel */
+    .tp-panel {
+      position: fixed;
+      top: 80px;
+      right: 0;
+      bottom: 0;
+      width: min(520px, 92vw);
+      background: var(--bg-dark);
+      border-left: 1px solid var(--border-color);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      z-index: 80;
+    }
+
+    .tp-panel.visible {
+      transform: translateX(0);
+    }
+
+    .tp-panel-content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+    }
+
+    .tp-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      letter-spacing: 1px;
+    }
+
+    .tp-panel-actions {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.7rem;
+    }
+
+    .tp-panel-actions a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+
+    .tp-panel-actions a:hover {
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+    }
+
+    .tp-panel-body {
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .tp-panel-body h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      margin: 1rem 0 0.5rem;
+      color: var(--accent-orange);
+      letter-spacing: 1px;
+    }
+
+    .tp-panel-body h4 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.9rem;
+      margin: 0.75rem 0 0.5rem;
+      color: var(--accent-cyan);
+    }
+
+    .tp-panel-body p,
+    .tp-panel-body li {
+      font-size: 1rem;
+      color: var(--text-secondary);
+    }
+
+    .tp-panel-body li {
+      padding-left: 1.5rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .tp-panel-body li::before {
+      width: 6px;
+      height: 6px;
+      top: 0.55em;
+    }
+
+    .tp-panel-body pre {
+      font-size: 0.95rem;
+    }
+
+    .tp-panel-empty {
+      font-size: 1rem;
+      color: var(--text-dim);
+    }
+
     /* Progress bar */
     .progress-container {
       position: fixed;
@@ -847,6 +961,7 @@
       <nav class="day-nav">
         <button class="day-btn active" data-day="1">JOUR 1</button>
         <button class="day-btn" data-day="2">JOUR 2</button>
+        <button class="day-btn" data-day="3">J2-ALT</button>
       </nav>
 
       <div class="nav-controls">
@@ -860,6 +975,8 @@
           </button>
           <div class="slide-menu-dropdown" id="slideMenu"></div>
         </div>
+        <button class="control-btn label" id="tpBtn" title="Énoncé TP (T)">TP</button>
+        <button class="control-btn label" id="assistBtn" title="Mode assistance (A)">AIDE</button>
         <button class="control-btn" id="notesBtn" title="Notes orateur (N)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -1719,6 +1836,879 @@ State state = GREEN;
         </div>
       </div>
 
+      <!-- ==================== JOUR 2 ALT ==================== -->
+
+      <!-- J2A.01 - Titre -->
+      <div class="slide" data-day="3" data-note="INTRO PLAN B (3 min) — Contexte météo : on passe sur un plan B sans perdre l'objectif pédagogique. Promesse : pipeline IoT complet en temps réel, de la source au dashboard.">
+        <div class="slide-content hero-slide">
+          <span class="slide-number">J2A.01</span>
+          <h1 class="slide-title title-hero">IoT — Jour 2 (Alt)</h1>
+          <p class="slide-subtitle" style="text-align: center; margin-top: -1rem;">Plan B : pipeline temps réel</p>
+          <p class="author">Sion GENDERS</p>
+          <p class="linkedin"><a href="https://www.linkedin.com/in/sion-gdrs/" target="_blank">linkedin.com/in/sion-gdrs</a></p>
+        </div>
+      </div>
+
+      <!-- J2A.02 - Plan du jour -->
+      <div class="slide" data-day="3" data-note="PLAN (2 min) — Montrer la logique en 8 étapes, chaque étape est un exercice. Insister sur le fil rouge : un flux live qui devient contrôlable.">
+        <div class="slide-content" style="text-align: center;">
+          <span class="slide-number">J2A.02</span>
+          <h1 class="slide-title title-plan">Plan du jour (Alt)</h1>
+          <ol style="display: inline-block; text-align: left;">
+            <li>Cadrage + contrat des messages</li>
+            <li>Broker MQTT local</li>
+            <li>ESP32 : Wi‑Fi + MQTT + télémétrie</li>
+            <li>ESP32 : simulation + events + LWT</li>
+            <li>Serveur bridge MQTT → WebSocket</li>
+            <li>Front-end temps réel</li>
+            <li>Commandes bout en bout</li>
+            <li>Robustesse + démo finale</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- J2A.03 - Architecture -->
+      <div class="slide" data-day="3" data-note="ARCHI (5 min) — Dessiner le pipeline. Expliquer : MQTT = bus pub/sub, WS = push navigateur. Le bridge transforme les messages pour l'UI.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.03</span>
+          <h1 class="slide-title">Pipeline temps réel</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li>ESP32 simule des mesures (temp, humidité, batterie)</li>
+                <li>MQTT transporte des messages légers</li>
+                <li>Bridge = conversion MQTT → WebSocket</li>
+                <li>Dashboard = visualiser + commander</li>
+              </ul>
+              <div class="info-box" style="margin-top: 1.5rem;">
+                <div class="info-box-title">🎯 OBJECTIF</div>
+                <p>Voir un flux live, puis fermer la boucle avec une commande.</p>
+              </div>
+            </div>
+            <div>
+              <pre><code>ESP32
+  ↓ MQTT
+Server bridge
+  ↓ WebSocket
+Web dashboard</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.DEF - Definitions -->
+      <div class="slide" data-day="3" data-note="VOCAB (5 min) — Donner des définitions simples. Insister : MQTT = pub/sub via broker, WS = canal temps réel pour le navigateur.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.DEF</span>
+          <h1 class="slide-title">Définitions clés</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li><strong>MQTT :</strong> protocole léger pub/sub, optimisé pour objets et réseaux instables</li>
+                <li><strong>WebSocket :</strong> connexion persistante et bidirectionnelle (push temps réel)</li>
+                <li><strong>Télémétrie :</strong> mesures périodiques envoyées par l'objet</li>
+                <li><strong>LWT :</strong> message automatique si un device tombe (Last Will & Testament)</li>
+              </ul>
+            </div>
+            <div>
+              <div class="info-box">
+                <div class="info-box-title">📘 MINI-GLOSSAIRE</div>
+                <ul style="margin: 0;">
+                  <li><strong>Broker :</strong> serveur qui route les messages</li>
+                  <li><strong>Topic :</strong> canal nommé de publication</li>
+                  <li><strong>Payload :</strong> contenu JSON transporté</li>
+                </ul>
+              </div>
+              <pre style="margin-top: 1.5rem;"><code>publisher → [broker] → subscribers
+topic = "classroom/esp32-01/telemetry"</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.04 - Contrat -->
+      <div class="slide" data-day="3" data-note="CONTRAT (5 min) — Le contrat est la source de vérité. Sans lui, les équipes cassent la chaîne. Montrer topics + payload.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.04</span>
+          <h1 class="slide-title">Contrat de messages</h1>
+          <div class="two-col">
+            <div>
+              <h3>Topics</h3>
+              <ul>
+                <li><code>classroom/&lt;deviceId&gt;/telemetry</code></li>
+                <li><code>classroom/&lt;deviceId&gt;/events</code></li>
+                <li><code>classroom/&lt;deviceId&gt;/cmd</code></li>
+                <li><code>classroom/&lt;deviceId&gt;/status</code></li>
+              </ul>
+            </div>
+            <div>
+              <h3>topics.md (extrait)</h3>
+              <pre><code>Topic | Sens | Émis par | Payload
+classroom/&lt;deviceId&gt;/telemetry | mesures | ESP32 | JSON telemetry
+classroom/&lt;deviceId&gt;/events | events | ESP32 | JSON event
+classroom/&lt;deviceId&gt;/cmd | commandes | server | JSON cmd</code></pre>
+              <h3 style="margin-top: 1.5rem;">examples.json</h3>
+              <pre><code>{
+  "telemetry": {
+    "deviceId": "esp32-01",
+    "ts": 1736080000,
+    "seq": 42,
+    "tempC": 22.4,
+    "humPct": 48.1,
+    "batteryPct": 87
+  }
+}</code></pre>
+            </div>
+          </div>
+          <div class="info-box success" style="margin-top: 1.5rem;">
+            <div class="info-box-title">✅ RÈGLE D'OR</div>
+            <p>On fige le contrat AVANT de coder le serveur ou le front.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.P1 - Projet contracts -->
+      <div class="slide" data-day="3" data-note="PROJET contracts — Définition claire + points clés. C'est la référence unique pour toute l'équipe.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.P1</span>
+          <h1 class="slide-title">Projet : contracts/</h1>
+          <div class="two-col">
+            <div>
+              <h3>Définition</h3>
+              <p>Contrat commun : topics MQTT + formats JSON attendus.</p>
+            </div>
+            <div>
+              <h3>Talking points</h3>
+              <ul>
+                <li>Source de vérité partagée</li>
+                <li>Évite le drift entre device / serveur / front</li>
+                <li>Facilite les tests rapides</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.TP1 - Cadrage -->
+      <div class="slide" data-day="3" data-note="TP 1 (30 min) — Cadrage et initialisation : monorepo + contrat de messages." data-exercise="../J2-Alt/iot-live-dashboard/exercises/01-cadrage-init.md">
+        <div class="slide-content">
+          <span class="slide-number">J2A.TP1</span>
+          <h1 class="slide-title">TP 1 : Cadrage et initialisation</h1>
+          <div class="two-col">
+            <div>
+              <h3>Formats attendus</h3>
+              <ul>
+                <li><code>topics.md</code> : tableau <code>Topic | Sens | Émis par | Payload</code></li>
+                <li><code>examples.json</code> : <code>telemetry</code>, <code>event_boot</code>, <code>event_ack</code>, <code>cmd</code>, <code>status</code></li>
+                <li><code>telemetry</code> : <code>deviceId</code>, <code>ts</code>, <code>seq</code>, <code>tempC</code>, <code>humPct</code>, <code>batteryPct</code></li>
+                <li><code>event</code> : <code>deviceId</code>, <code>ts</code>, <code>type</code> (+ <code>cmd</code>, <code>ok</code> pour ack)</li>
+                <li><code>cmd</code> : <code>cmd</code>, <code>value</code> • <code>status</code> : <code>deviceId</code>, <code>ts</code>, <code>status</code></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Ordre</h3>
+              <ol>
+                <li>Créer <code>iot-live-dashboard/</code></li>
+                <li>Choisir le <code>deviceId</code> (format <code>esp32-XX</code>)</li>
+                <li>Rédiger <code>topics.md</code></li>
+                <li>Rédiger <code>examples.json</code></li>
+                <li>Valider avec l'équipe</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.PRE - Pré-requis -->
+      <div class="slide" data-day="3" data-note="PRÉ-REQUIS (5 min) — Installer les outils clés avant de lancer le broker et l'ESP32.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.PRE</span>
+          <h1 class="slide-title">Pré-requis & installation</h1>
+          <div class="two-col">
+            <div>
+              <h3>Outils</h3>
+              <ul>
+                <li>Docker (broker MQTT)</li>
+                <li>Node.js (serveur + dashboard)</li>
+                <li>PlatformIO ou Arduino IDE (ESP32)</li>
+              </ul>
+              <div class="info-box" style="margin-top: 1.5rem;">
+                <div class="info-box-title">✅ CHECK</div>
+                <p><code>docker compose version</code> • <code>node -v</code> • Serial Monitor</p>
+              </div>
+            </div>
+            <div>
+              <h3>Windows</h3>
+              <ul>
+                <li>Installer Docker Desktop</li>
+                <li>WSL2 activé</li>
+                <li>Redémarrer si demandé</li>
+              </ul>
+              <h3 style="margin-top: 1.5rem;">Linux</h3>
+              <ul>
+                <li>Docker Engine + plugin compose</li>
+                <li>Ajouter l'utilisateur au groupe <code>docker</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.MQTT - Cours -->
+      <div class="slide" data-day="3" data-note="COURS MQTT (5 min) — Pub/Sub et broker : qui envoie, qui reçoit.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.MQTT</span>
+          <h1 class="slide-title">MQTT en 3 idées</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li>Broker central = poste de tri</li>
+                <li>Clients publient et s'abonnent</li>
+                <li>Topics hiérarchiques (ex: <code>classroom/+/telemetry</code>)</li>
+              </ul>
+              <div class="info-box success" style="margin-top: 1.5rem;">
+                <div class="info-box-title">🎯 À RETENIR</div>
+                <p>On ne parle jamais en direct : tout passe par le broker.</p>
+              </div>
+            </div>
+            <div>
+              <pre><code>ESP32 → broker → dashboard
+        ↑
+     commandes</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.LINK1 - Telemetry -->
+      <div class="slide" data-day="3" data-note="DIALOGUE (5 min) — Focus telemetrie : ESP32 vers UI.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.LINK1</span>
+          <h1 class="slide-title">Dialogue : télémétrie</h1>
+          <div class="two-col">
+            <div>
+              <h3>Trajet</h3>
+              <p>ESP32 → MQTT → bridge → WebSocket → dashboard</p>
+              <div class="info-box" style="margin-top: 1.5rem;">
+                <div class="info-box-title">🔗 FOCUS</div>
+                <p><strong>ESP32</strong> publie <code>telemetry</code> sur MQTT.</p>
+              </div>
+            </div>
+            <div>
+              <pre style="font-size: 0.9rem;"><code>// ESP32
+mqttClient.publish("classroom/esp32-01/telemetry", payload);
+
+// Bridge
+broadcast({ type: "telemetry", deviceId: "esp32-01", payload });
+
+// UI
+ws.onmessage = (evt) => render(JSON.parse(evt.data));</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.LINK2 - Command -->
+      <div class="slide" data-day="3" data-note="DIALOGUE (5 min) — Focus commande : UI vers ESP32.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.LINK2</span>
+          <h1 class="slide-title">Dialogue : commande</h1>
+          <div class="two-col">
+            <div>
+              <h3>Trajet</h3>
+              <p>dashboard → WebSocket → bridge → MQTT → ESP32</p>
+              <div class="info-box" style="margin-top: 1.5rem;">
+                <div class="info-box-title">🔗 FOCUS</div>
+                <p><strong>ESP32</strong> subscribe <code>cmd</code> et renvoie <code>ack</code>.</p>
+              </div>
+            </div>
+            <div>
+              <pre style="font-size: 0.9rem;"><code>// UI
+ws.send(JSON.stringify({ type: "cmd", deviceId: "esp32-01", cmd: "LED", value: 1 }));
+
+// Bridge
+mqttClient.publish("classroom/esp32-01/cmd", JSON.stringify({ cmd: "LED", value: 1 }));
+
+// ESP32
+if (cmd == "LED") publishAck("LED", true);</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.C2 - Docker/Mosquitto -->
+      <div class="slide" data-day="3" data-note="COURS TP2 (5 min) — Docker Compose pour un broker local.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.C2</span>
+          <h1 class="slide-title">Docker + Mosquitto</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li>Un service, un port, un volume</li>
+                <li>Le broker tourne en local</li>
+                <li>Démarrage en une commande</li>
+              </ul>
+              <div class="info-box" style="margin-top: 1.5rem;">
+                <div class="info-box-title">✅ COMMANDES</div>
+                <p><code>docker compose up -d</code> • <code>docker compose ps</code></p>
+              </div>
+            </div>
+            <div>
+              <pre><code>services:
+  mqtt:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.P2 - Projet docker -->
+      <div class="slide" data-day="3" data-note="PROJET docker — Broker local pour la classe. Un point central pour publier et s'abonner.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.P2</span>
+          <h1 class="slide-title">Projet : docker/</h1>
+          <div class="two-col">
+            <div>
+              <h3>Définition</h3>
+              <p>Broker MQTT local (mosquitto) lancé en une commande.</p>
+            </div>
+            <div>
+              <h3>Talking points</h3>
+              <ul>
+                <li>Point central pub/sub pour tous les devices</li>
+                <li>Facile à redémarrer pendant la démo</li>
+                <li>Compatible avec MQTT Explorer</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.TP2 - Broker -->
+      <div class="slide" data-day="3" data-note="TP 2 (45 min) — Broker MQTT local : démarrer mosquitto et tester pub/sub." data-exercise="../J2-Alt/iot-live-dashboard/exercises/02-broker-mqtt.md">
+        <div class="slide-content">
+          <span class="slide-number">J2A.TP2</span>
+          <h1 class="slide-title">TP 2 : Broker MQTT local</h1>
+          <div class="two-col">
+            <div>
+              <h3>Consignes</h3>
+              <ul>
+                <li>Broker local opérationnel</li>
+                <li>Test pub/sub réussi</li>
+                <li>Doc de lancement rapide</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Walkthrough</h3>
+              <ol>
+                <li><code>docker compose up -d</code></li>
+                <li>Tester avec <code>mosquitto_pub/sub</code></li>
+                <li>Noter la commande dans README</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.P3 - Projet esp32-device -->
+      <div class="slide" data-day="3" data-note="PROJET esp32-device — Source de données + réception de commandes. C'est l'objet connecté.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.P3</span>
+          <h1 class="slide-title">Projet : esp32-device/</h1>
+          <div class="two-col">
+            <div>
+              <h3>Définition</h3>
+              <p>ESP32 qui simule la télémétrie et exécute les commandes.</p>
+            </div>
+            <div>
+              <h3>Talking points</h3>
+              <ul>
+                <li>Wi‑Fi + MQTT + reconnexion</li>
+                <li>Publie <code>telemetry</code> et <code>events</code></li>
+                <li>Supporte <code>LED</code> et <code>INTERVAL_MS</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.ESP - ESP32 vs Arduino -->
+      <div class="slide" data-day="3" data-note="ESP32 vs UNO (5-7 min) — Clarifier les différences et la connectivité. UNO = pas de Wi‑Fi natif, ESP32 = Wi‑Fi/BLE intégrés.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.ESP</span>
+          <h1 class="slide-title">ESP32 vs Arduino Uno</h1>
+          <div class="two-col">
+            <div>
+              <h3>Arduino Uno</h3>
+              <ul>
+                <li>Microcontrôleur simple (ATmega328P)</li>
+                <li>Pas de Wi‑Fi/BLE natif</li>
+                <li>Idéal pour apprendre GPIO & timing</li>
+              </ul>
+              <h3 style="margin-top: 1.5rem;">ESP32</h3>
+              <ul>
+                <li>MCU 32‑bit + Wi‑Fi + BLE intégrés</li>
+                <li>Plus de RAM/flash, multitâche</li>
+                <li>Parfait pour objets connectés</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Connexion Wi‑Fi</h3>
+              <ul>
+                <li>Mode <strong>STA</strong> : se connecte à un routeur</li>
+                <li>Mode <strong>AP</strong> : crée son propre Wi‑Fi</li>
+                <li>Mode <strong>AP+STA</strong> : les deux</li>
+              </ul>
+              <div class="info-box" style="margin-top: 1.5rem;">
+                <div class="info-box-title">📡 CONNECTIVITÉ</div>
+                <ul style="margin: 0;">
+                  <li>Wi‑Fi 2.4 GHz (802.11 b/g/n)</li>
+                  <li>Bluetooth Classic + BLE</li>
+                  <li>UART / I2C / SPI pour capteurs</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.WIFI - Connexion Wi-Fi -->
+      <div class="slide" data-day="3" data-note="WIFI (5 min) — Montrer le code minimum pour connecter l'ESP32.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.WIFI</span>
+          <h1 class="slide-title">ESP32 : connexion Wi‑Fi</h1>
+          <div class="two-col">
+            <div>
+              <h3>Étapes</h3>
+              <ol>
+                <li>Renseigner SSID + mot de passe</li>
+                <li>Passer en mode <code>WIFI_STA</code></li>
+                <li>Attendre <code>WL_CONNECTED</code></li>
+                <li>Afficher l'IP</li>
+              </ol>
+              <div class="info-box warning" style="margin-top: 1.5rem;">
+                <div class="info-box-title">⚠️ PIÈGES</div>
+                <p>ESP32 = Wi‑Fi 2.4 GHz uniquement • SSID sensible à la casse</p>
+              </div>
+            </div>
+            <div>
+              <pre><code><span class="type">const char*</span> ssid = <span class="string">"WIFI_SSID"</span>;
+<span class="type">const char*</span> pass = <span class="string">"WIFI_PASS"</span>;
+
+WiFi.mode(WIFI_STA);
+WiFi.begin(ssid, pass);
+while (WiFi.status() != WL_CONNECTED) {
+  delay(300);
+}
+Serial.println(WiFi.localIP());</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.C3 - MQTT ESP32 -->
+      <div class="slide" data-day="3" data-note="COURS TP3 (5 min) — Connexion MQTT minimale sur ESP32.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.C3</span>
+          <h1 class="slide-title">ESP32 : MQTT minimal</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li>Client MQTT connecté au broker</li>
+                <li>Publication de <code>telemetry</code></li>
+                <li>Subscription sur <code>cmd</code></li>
+              </ul>
+              <div class="info-box" style="margin-top: 1.5rem;">
+                <div class="info-box-title">🔁 BOUCLE</div>
+                <p><code>connect</code> → <code>subscribe</code> → <code>publish</code></p>
+              </div>
+            </div>
+            <div>
+              <pre><code>mqttClient.setServer(MQTT_HOST, 1883);
+if (mqttClient.connect("esp32-01")) {
+  mqttClient.subscribe("classroom/esp32-01/cmd");
+  mqttClient.publish("classroom/esp32-01/telemetry", payload);
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.TP3 - ESP32 base -->
+      <div class="slide" data-day="3" data-note="TP 3 (60 min) — ESP32 : Wi‑Fi + MQTT + télémétrie régulière." data-exercise="../J2-Alt/iot-live-dashboard/exercises/03-esp32-wifi-mqtt.md">
+        <div class="slide-content">
+          <span class="slide-number">J2A.TP3</span>
+          <h1 class="slide-title">TP 3 : ESP32 (Wi‑Fi + MQTT + télémétrie)</h1>
+          <div class="two-col">
+            <div>
+              <h3>Consignes</h3>
+              <ul>
+                <li>Connexion Wi‑Fi stable</li>
+                <li>Connexion MQTT + reconnect</li>
+                <li>Publier <code>telemetry</code> toutes les 1s</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Walkthrough</h3>
+              <ol>
+                <li>Configurer SSID / broker</li>
+                <li>Publier JSON avec <code>seq</code></li>
+                <li>Vérifier avec <code>mosquitto_sub</code></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.C4 - Simulation -->
+      <div class="slide" data-day="3" data-note="COURS TP4 (5 min) — Simulation + events + LWT.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.C4</span>
+          <h1 class="slide-title">Simulation + events + LWT</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li>Courbes lentes + bruit léger</li>
+                <li>Event <code>boot</code> au démarrage</li>
+                <li>LWT = offline automatique</li>
+              </ul>
+              <div class="info-box warning" style="margin-top: 1.5rem;">
+                <div class="info-box-title">⚠️ POINT CLÉ</div>
+                <p>LWT se configure au moment du <code>connect()</code>.</p>
+              </div>
+            </div>
+            <div>
+              <pre><code>float tempC = 22 + 2 * sin(t / 12.0);
+publishEvent("boot");
+client.connect(id, nullptr, nullptr,
+  statusTopic, 1, true, offlinePayload);</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.TP4 - Simulation -->
+      <div class="slide" data-day="3" data-note="TP 4 (60 min) — Simulation réaliste + events + LWT." data-exercise="../J2-Alt/iot-live-dashboard/exercises/04-esp32-simulation-events.md">
+        <div class="slide-content">
+          <span class="slide-number">J2A.TP4</span>
+          <h1 class="slide-title">TP 4 : Simulation réaliste + events + LWT</h1>
+          <div class="two-col">
+            <div>
+              <h3>Consignes</h3>
+              <ul>
+                <li>Température/humidité crédibles</li>
+                <li>Event <code>boot</code> + <code>ack</code></li>
+                <li>Détection <code>offline</code> via LWT</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Walkthrough</h3>
+              <ol>
+                <li>Ajouter sinusoïde + bruit</li>
+                <li>Publier <code>events</code></li>
+                <li>Configurer le Last Will</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.P4 - Projet server-bridge -->
+      <div class="slide" data-day="3" data-note="PROJET server-bridge — Convertit MQTT en WS et renvoie les commandes.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.P4</span>
+          <h1 class="slide-title">Projet : server-bridge/</h1>
+          <div class="two-col">
+            <div>
+              <h3>Définition</h3>
+              <p>Passerelle Node.js MQTT → WebSocket + routage des commandes.</p>
+            </div>
+            <div>
+              <h3>Talking points</h3>
+              <ul>
+                <li>Multi-clients WS en parallèle</li>
+                <li>Cache du dernier état par device</li>
+                <li>Transforme les messages pour l'UI</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.WS - Cours WebSocket -->
+      <div class="slide" data-day="3" data-note="COURS WS (5 min) — WebSocket = canal temps réel entre serveur et navigateur.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.WS</span>
+          <h1 class="slide-title">WebSocket en bref</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li>Connexion persistante et bidirectionnelle</li>
+                <li>Basée sur un upgrade HTTP</li>
+                <li>Idéale pour le temps réel</li>
+              </ul>
+              <div class="info-box" style="margin-top: 1.5rem;">
+                <div class="info-box-title">🔁 FLUX</div>
+                <p>MQTT → bridge → WebSocket → navigateur</p>
+              </div>
+            </div>
+            <div>
+              <h3>Exemple de message</h3>
+              <pre><code>{
+  "type": "telemetry",
+  "deviceId": "esp32-01",
+  "payload": { "tempC": 22.4 }
+}</code></pre>
+              <h3 style="margin-top: 1.5rem;">Serveur WS (extrait)</h3>
+              <pre><code>const wss = new WebSocketServer({ server, path: "/ws" });
+wss.on("connection", (ws) => ws.send("hello"));</code></pre>
+              <div class="info-box warning" style="margin-top: 1rem;">
+                <div class="info-box-title">⚠️ POINT CLÉ</div>
+                <p>Le chemin WS est fixe (ex: <code>/ws</code>).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.C5 - Bridge -->
+      <div class="slide" data-day="3" data-note="COURS TP5 (5 min) — Le bridge convertit MQTT en WS.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.C5</span>
+          <h1 class="slide-title">Bridge MQTT → WebSocket</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li>Subscribe sur <code>telemetry</code> et <code>events</code></li>
+                <li>Transforme en JSON pour le front</li>
+                <li>Broadcast vers tous les clients</li>
+              </ul>
+              <div class="info-box" style="margin-top: 1.5rem;">
+                <div class="info-box-title">🔁 FLUX</div>
+                <p>MQTT in → WS out</p>
+              </div>
+            </div>
+            <div>
+              <pre><code>mqttClient.on("message", (topic, msg) => {
+  const payload = JSON.parse(msg);
+  broadcast({ type: "telemetry", payload });
+});</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.TP5 - Bridge -->
+      <div class="slide" data-day="3" data-note="TP 5 (60 min) — Serveur bridge MQTT → WebSocket." data-exercise="../J2-Alt/iot-live-dashboard/exercises/05-server-bridge.md">
+        <div class="slide-content">
+          <span class="slide-number">J2A.TP5</span>
+          <h1 class="slide-title">TP 5 : Serveur bridge MQTT → WebSocket</h1>
+          <div class="two-col">
+            <div>
+              <h3>Consignes</h3>
+              <ul>
+                <li>Recevoir MQTT et diffuser en WS</li>
+                <li>Support multi-clients</li>
+                <li>Cache du dernier état</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Walkthrough</h3>
+              <ol>
+                <li>Subscribe sur <code>telemetry</code> + <code>events</code></li>
+                <li>Ouvrir <code>ws://localhost:8080/ws</code></li>
+                <li>Broadcast JSON vers les clients</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.P5 - Projet web-dashboard -->
+      <div class="slide" data-day="3" data-note="PROJET web-dashboard — Affiche le temps réel et envoie les commandes.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.P5</span>
+          <h1 class="slide-title">Projet : web-dashboard/</h1>
+          <div class="two-col">
+            <div>
+              <h3>Définition</h3>
+              <p>Interface temps réel : valeurs live + contrôle simple.</p>
+            </div>
+            <div>
+              <h3>Talking points</h3>
+              <ul>
+                <li>Statut Connected/Disconnected</li>
+                <li>Liste des devices + dernières valeurs</li>
+                <li>Boutons LED + intervalle</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.C6 - Client WebSocket -->
+      <div class="slide" data-day="3" data-note="COURS TP6 (5 min) — Client WebSocket minimal dans le navigateur.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.C6</span>
+          <h1 class="slide-title">Client WebSocket (front)</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li>Connexion persistante</li>
+                <li>OnMessage = rendu UI</li>
+                <li>Auto-reconnect simple</li>
+              </ul>
+              <div class="info-box" style="margin-top: 1.5rem;">
+                <div class="info-box-title">🎯 UI</div>
+                <p>Un device = une carte UI.</p>
+              </div>
+            </div>
+            <div>
+              <pre><code>const ws = new WebSocket("ws://localhost:8080/ws");
+ws.onmessage = (evt) => {
+  const msg = JSON.parse(evt.data);
+  render(msg);
+};</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.TP6 - Front -->
+      <div class="slide" data-day="3" data-note="TP 6 (60 min) — Front-end live : dashboard + état connexion." data-exercise="../J2-Alt/iot-live-dashboard/exercises/06-frontend-live.md">
+        <div class="slide-content">
+          <span class="slide-number">J2A.TP6</span>
+          <h1 class="slide-title">TP 6 : Front-end live</h1>
+          <div class="two-col">
+            <div>
+              <h3>Consignes</h3>
+              <ul>
+                <li>Connexion WebSocket</li>
+                <li>Affichage par device</li>
+                <li>Statut Connected/Disconnected</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Walkthrough</h3>
+              <ol>
+                <li>Se connecter au WS</li>
+                <li>Rendre la liste des devices</li>
+                <li>Mettre à jour les valeurs</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.C7 - Commandes -->
+      <div class="slide" data-day="3" data-note="COURS TP7 (5 min) — Commandes + ACK sur le flux.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.C7</span>
+          <h1 class="slide-title">Commandes + ACK</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li>Le front envoie un <code>cmd</code> via WS</li>
+                <li>Le bridge publie sur MQTT</li>
+                <li>L'ESP32 renvoie un <code>ack</code></li>
+              </ul>
+              <div class="info-box success" style="margin-top: 1.5rem;">
+                <div class="info-box-title">✅ RÈGLE</div>
+                <p>Un <code>cmd</code> = un <code>ack</code>.</p>
+              </div>
+            </div>
+            <div>
+              <pre><code>// UI
+ws.send(JSON.stringify({ type: "cmd", deviceId: "esp32-01", cmd: "LED", value: 1 }));
+
+// ESP32
+if (cmd == "LED") publishAck("LED", true);</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.TP7 - Commandes -->
+      <div class="slide" data-day="3" data-note="TP 7 (75 min) — Commandes bout en bout + ACK." data-exercise="../J2-Alt/iot-live-dashboard/exercises/07-commandes.md">
+        <div class="slide-content">
+          <span class="slide-number">J2A.TP7</span>
+          <h1 class="slide-title">TP 7 : Commandes bout en bout</h1>
+          <div class="two-col">
+            <div>
+              <h3>Consignes</h3>
+              <ul>
+                <li>LED ON/OFF depuis le web</li>
+                <li>Intervalle réglable</li>
+                <li>ACK visible côté UI</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Walkthrough</h3>
+              <ol>
+                <li>Front → WS : <code>cmd</code></li>
+                <li>Bridge → MQTT : <code>classroom/&lt;id&gt;/cmd</code></li>
+                <li>ESP32 → events : <code>ack</code></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.C8 - Robustesse -->
+      <div class="slide" data-day="3" data-note="COURS TP8 (5 min) — Reconnexion et stabilité.">
+        <div class="slide-content">
+          <span class="slide-number">J2A.C8</span>
+          <h1 class="slide-title">Robustesse : reconnexion</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li>Détecter la coupure</li>
+                <li>Re-tenter avec backoff</li>
+                <li>Garder l'UI stable</li>
+              </ul>
+              <div class="info-box warning" style="margin-top: 1.5rem;">
+                <div class="info-box-title">⚙️ PATTERN</div>
+                <p>2s → 4s → 8s → plafond</p>
+              </div>
+            </div>
+            <div>
+              <pre><code>if (!connected) {
+  delay = min(delay * 2, 8000);
+  reconnect();
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J2A.TP8 - Robustesse -->
+      <div class="slide" data-day="3" data-note="TP 8 (45 min) — Robustesse et démo finale." data-exercise="../J2-Alt/iot-live-dashboard/exercises/08-robustesse-demo.md">
+        <div class="slide-content">
+          <span class="slide-number">J2A.TP8</span>
+          <h1 class="slide-title">TP 8 : Robustesse & démo finale</h1>
+          <div class="two-col">
+            <div>
+              <h3>Consignes</h3>
+              <ul>
+                <li>Reconnexion auto partout</li>
+                <li>Gestion WS ping/pong</li>
+                <li>Démo stable en 3 minutes</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Walkthrough</h3>
+              <ol>
+                <li>Backoff côté ESP32 + serveur</li>
+                <li>Auto-reconnect côté UI</li>
+                <li>Script de démo pas à pas</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -1733,6 +2723,21 @@ State state = GREEN;
         NOTES ORATEUR
       </div>
       <p class="speaker-notes-text" id="notesText">Aucune note pour cette slide.</p>
+    </div>
+  </div>
+
+  <!-- TP panel -->
+  <div class="tp-panel" id="tpPanel">
+    <div class="tp-panel-content">
+      <div class="tp-panel-header">
+        <span>TP — ÉNONCÉ</span>
+        <div class="tp-panel-actions">
+          <a href="#" id="tpOpenLink" target="_blank" rel="noopener noreferrer">ouvrir</a>
+        </div>
+      </div>
+      <div class="tp-panel-body" id="tpPanelBody">
+        <p class="tp-panel-empty">Aucun énoncé pour cette slide.</p>
+      </div>
     </div>
   </div>
 
@@ -1765,6 +2770,8 @@ State state = GREEN;
     <span class="key">←</span><span class="key">→</span> naviguer
     <span class="key">N</span> notes
     <span class="key">F</span> plein écran
+    <span class="key">T</span> TP
+    <span class="key">A</span> aide
   </div>
 
   <script>
@@ -1772,6 +2779,10 @@ State state = GREEN;
     let currentDay = 1;
     let currentSlideIndex = 0;
     let notesVisible = false;
+    let tpVisible = false;
+    let assistMode = false;
+    let currentExercisePath = '';
+    const exerciseCache = new Map();
     let slides = [];
     let filteredSlides = [];
 
@@ -1789,6 +2800,11 @@ State state = GREEN;
     const progressBar = document.getElementById('progressBar');
     const currentSlideEl = document.getElementById('currentSlide');
     const totalSlidesEl = document.getElementById('totalSlides');
+    const tpBtn = document.getElementById('tpBtn');
+    const assistBtn = document.getElementById('assistBtn');
+    const tpPanel = document.getElementById('tpPanel');
+    const tpPanelBody = document.getElementById('tpPanelBody');
+    const tpOpenLink = document.getElementById('tpOpenLink');
 
     // Initialize
     function init() {
@@ -1869,6 +2885,8 @@ State state = GREEN;
       document.querySelectorAll('.slide-menu-item').forEach((item, i) => {
         item.classList.toggle('active', i === currentSlideIndex);
       });
+
+      updateTpPanelAvailability();
     }
 
     // Navigation
@@ -1900,6 +2918,214 @@ State state = GREEN;
       notesBtn.classList.toggle('active', notesVisible);
     }
 
+    function setTpVisible(visible) {
+      tpVisible = visible;
+      tpPanel.classList.toggle('visible', tpVisible);
+      tpBtn.classList.toggle('active', tpVisible);
+
+      if (tpVisible && notesVisible) {
+        notesVisible = false;
+        speakerNotes.classList.remove('visible');
+        notesBtn.classList.remove('active');
+      }
+    }
+
+    function toggleTp() {
+      const currentSlide = filteredSlides[currentSlideIndex];
+      if (!currentSlide?.dataset.exercise) {
+        return;
+      }
+      setTpVisible(!tpVisible);
+      if (tpVisible) {
+        loadExerciseForSlide(currentSlide);
+      }
+    }
+
+    function toggleAssist() {
+      const currentSlide = filteredSlides[currentSlideIndex];
+      if (!currentSlide?.dataset.exercise) {
+        return;
+      }
+      assistMode = !assistMode;
+      assistBtn.classList.toggle('active', assistMode);
+      if (tpVisible) {
+        loadExerciseForSlide(currentSlide);
+      }
+    }
+
+    function stripAssistSection(markdown) {
+      const lines = markdown.split('\n');
+      const output = [];
+      let skip = false;
+
+      for (const line of lines) {
+        if (/^##\s*(Aide|Assistance)\b/i.test(line)) {
+          skip = true;
+          continue;
+        }
+
+        if (skip && /^#{1,6}\s+/.test(line)) {
+          skip = false;
+        }
+
+        if (skip) {
+          continue;
+        }
+
+        output.push(line);
+      }
+
+      return output.join('\n');
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderMarkdown(markdown) {
+      const lines = markdown.split('\n');
+      let html = '';
+      let inCode = false;
+      let listType = null;
+
+      const closeList = () => {
+        if (listType) {
+          html += `</${listType}>`;
+          listType = null;
+        }
+      };
+
+      for (const line of lines) {
+        if (line.trim().startsWith('```')) {
+          if (inCode) {
+            html += '</code></pre>';
+            inCode = false;
+          } else {
+            closeList();
+            html += '<pre><code>';
+            inCode = true;
+          }
+          continue;
+        }
+
+        if (inCode) {
+          html += `${escapeHtml(line)}\n`;
+          continue;
+        }
+
+        if (line.trim() === '') {
+          closeList();
+          continue;
+        }
+
+        const headingMatch = line.match(/^(#{1,3})\s+(.*)$/);
+        if (headingMatch) {
+          closeList();
+          const level = headingMatch[1].length;
+          const tag = level <= 2 ? 'h3' : 'h4';
+          html += `<${tag}>${escapeHtml(headingMatch[2])}</${tag}>`;
+          continue;
+        }
+
+        const orderedMatch = line.match(/^\d+\.\s+(.*)$/);
+        if (orderedMatch) {
+          if (listType !== 'ol') {
+            closeList();
+            listType = 'ol';
+            html += '<ol>';
+          }
+          html += `<li>${escapeHtml(orderedMatch[1])}</li>`;
+          continue;
+        }
+
+        const bulletMatch = line.match(/^-\\s+(.*)$/);
+        if (bulletMatch) {
+          if (listType !== 'ul') {
+            closeList();
+            listType = 'ul';
+            html += '<ul>';
+          }
+          html += `<li>${escapeHtml(bulletMatch[1])}</li>`;
+          continue;
+        }
+
+        closeList();
+        html += `<p>${escapeHtml(line)}</p>`;
+      }
+
+      closeList();
+
+      if (inCode) {
+        html += '</code></pre>';
+      }
+
+      return html;
+    }
+
+    function renderExercise(markdown) {
+      const content = assistMode ? markdown : stripAssistSection(markdown);
+      tpPanelBody.innerHTML = renderMarkdown(content);
+    }
+
+    function loadExerciseForSlide(slide) {
+      const exercisePath = slide?.dataset.exercise || '';
+      if (!exercisePath) {
+        tpPanelBody.innerHTML = '<p class="tp-panel-empty">Aucun énoncé pour cette slide.</p>';
+        tpOpenLink.href = '#';
+        return;
+      }
+
+      currentExercisePath = exercisePath;
+      const exerciseUrl = new URL(exercisePath, window.location.href).toString();
+      tpOpenLink.href = exerciseUrl;
+
+      const cached = exerciseCache.get(exercisePath);
+      if (cached) {
+        renderExercise(cached);
+        return;
+      }
+
+      tpPanelBody.innerHTML = '<p class="tp-panel-empty">Chargement...</p>';
+      fetch(exerciseUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('not found');
+          }
+          return response.text();
+        })
+        .then((text) => {
+          exerciseCache.set(exercisePath, text);
+          renderExercise(text);
+        })
+        .catch(() => {
+          tpPanelBody.innerHTML = '<p class="tp-panel-empty">Énoncé introuvable.</p>';
+        });
+    }
+
+    function updateTpPanelAvailability() {
+      const currentSlide = filteredSlides[currentSlideIndex];
+      const exercisePath = currentSlide?.dataset.exercise;
+      const hasExercise = !!exercisePath;
+
+      tpBtn.disabled = !hasExercise;
+      assistBtn.disabled = !hasExercise;
+      assistBtn.classList.toggle('active', assistMode && hasExercise);
+
+      if (!hasExercise) {
+        setTpVisible(false);
+        return;
+      }
+
+      if (tpVisible && exercisePath !== currentExercisePath) {
+        loadExerciseForSlide(currentSlide);
+      }
+    }
+
     // Toggle fullscreen
     function toggleFullscreen() {
       if (!document.fullscreenElement) {
@@ -1920,6 +3146,8 @@ State state = GREEN;
     nextBtn.addEventListener('click', nextSlide);
     notesBtn.addEventListener('click', toggleNotes);
     fullscreenBtn.addEventListener('click', toggleFullscreen);
+    tpBtn.addEventListener('click', toggleTp);
+    assistBtn.addEventListener('click', toggleAssist);
 
     menuBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -1954,6 +3182,14 @@ State state = GREEN;
         case 'F':
           toggleFullscreen();
           break;
+        case 't':
+        case 'T':
+          toggleTp();
+          break;
+        case 'a':
+        case 'A':
+          toggleAssist();
+          break;
         case 'Escape':
           slideMenu.classList.remove('visible');
           break;
@@ -1962,6 +3198,9 @@ State state = GREEN;
           break;
         case '2':
           filterSlidesByDay(2);
+          break;
+        case '3':
+          filterSlidesByDay(3);
           break;
       }
     });

@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IoT Live Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Spline+Sans+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f3efe8;
+      --ink: #1d1b1a;
+      --muted: #6e6a65;
+      --accent: #ff7a00;
+      --accent-2: #0b7a75;
+      --card: #ffffff;
+      --border: #e3ddd3;
+      --shadow: 0 16px 40px rgba(30, 26, 23, 0.12);
+      --mono: "Spline Sans Mono", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at top, #fff6e1 0%, #f3efe8 45%, #f0e9dc 100%);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(30, 26, 23, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30, 26, 23, 0.06) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+
+    header {
+      padding: 32px clamp(20px, 5vw, 64px) 8px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .tagline {
+      font-family: var(--mono);
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    main {
+      padding: 16px clamp(20px, 5vw, 64px) 48px;
+      display: grid;
+      gap: 24px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 20px;
+      padding: 24px;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      align-items: center;
+    }
+
+    .status-card {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .status-label {
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .status-value {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      border: 1px solid var(--border);
+      background: #fffaf0;
+    }
+
+    .status-pill.online {
+      border-color: rgba(11, 122, 117, 0.5);
+      color: #0b7a75;
+    }
+
+    .status-pill.offline {
+      border-color: rgba(255, 122, 0, 0.5);
+      color: #ff7a00;
+    }
+
+    .controls-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      align-items: end;
+    }
+
+    label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    select,
+    input {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      background: #fffdf7;
+    }
+
+    button {
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 600;
+      font-family: "Space Grotesk", sans-serif;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 20px rgba(30, 26, 23, 0.12);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-ghost {
+      background: #fffaf0;
+      border: 1px solid var(--border);
+      color: var(--accent-2);
+    }
+
+    .device-grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    .device-card {
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #fff8ef 100%);
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .device-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .device-id {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .device-status {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-family: var(--mono);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .device-status[data-status="online"] {
+      border-color: rgba(11, 122, 117, 0.5);
+      color: #0b7a75;
+      background: rgba(11, 122, 117, 0.08);
+    }
+
+    .device-status[data-status="offline"] {
+      border-color: rgba(255, 122, 0, 0.5);
+      color: #ff7a00;
+      background: rgba(255, 122, 0, 0.08);
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-family: var(--mono);
+    }
+
+    .metric-label {
+      color: var(--muted);
+    }
+
+    .device-footer {
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="brand">IoT Live Dashboard</div>
+      <div class="tagline">J2-Alt - pipeline MQTT -> WebSocket</div>
+    </div>
+    <div class="status-pill offline" id="wsStatus">Disconnected</div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="status-grid">
+        <div class="status-card">
+          <div class="status-label">WebSocket</div>
+          <div class="status-value" id="wsUrl">ws://localhost:8080/ws</div>
+        </div>
+        <div class="status-card">
+          <div class="status-label">Devices</div>
+          <div class="status-value" id="deviceCount">0</div>
+        </div>
+        <div class="status-card">
+          <div class="status-label">Last event</div>
+          <div class="status-value" id="lastEvent">-</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Commandes</h2>
+      <div class="controls-grid" style="margin-top: 16px;">
+        <div>
+          <label for="deviceSelect">Device cible</label>
+          <select id="deviceSelect"></select>
+        </div>
+        <div>
+          <label>LED</label>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn-accent" id="ledOnBtn">LED ON</button>
+            <button class="btn-ghost" id="ledOffBtn">LED OFF</button>
+          </div>
+        </div>
+        <div>
+          <label for="intervalInput">Intervalle (ms)</label>
+          <div style="display: flex; gap: 12px;">
+            <input id="intervalInput" type="number" min="200" max="10000" value="1000" />
+            <button class="btn-accent" id="intervalBtn">Apply</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Devices actifs</h2>
+      <div class="device-grid" id="devices"></div>
+    </section>
+  </main>
+
+  <template id="deviceCardTemplate">
+    <div class="device-card">
+      <div class="device-header">
+        <div class="device-id" data-field="deviceId">-</div>
+        <div class="device-status" data-field="status" data-status="unknown">unknown</div>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">Temp (C)</span>
+        <span data-field="tempC">-</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">Hum (%)</span>
+        <span data-field="humPct">-</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">Battery (%)</span>
+        <span data-field="batteryPct">-</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-label">Seq</span>
+        <span data-field="seq">-</span>
+      </div>
+      <div class="device-footer" data-field="lastSeen">Last update: -</div>
+    </div>
+  </template>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
