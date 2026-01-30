@@ -962,6 +962,7 @@
         <button class="day-btn active" data-day="1">JOUR 1</button>
         <button class="day-btn" data-day="2">JOUR 2</button>
         <button class="day-btn" data-day="3">J2-ALT</button>
+        <button class="day-btn" data-day="4">JOUR 3</button>
       </nav>
 
       <div class="nav-controls">
@@ -2709,6 +2710,698 @@ if (cmd == "LED") publishAck("LED", true);</code></pre>
         </div>
       </div>
 
+      <!-- ==================== JOUR 3 - HARDWARE ==================== -->
+
+      <!-- J3.01 - Titre -->
+      <div class="slide" data-day="4" data-note="INTRO J3 (5 min) — Aujourd'hui on plonge dans le hardware ! Focus sur l'architecture interne, digital vs analogique, et des projets concrets : météo + flipper.">
+        <div class="slide-content hero-slide">
+          <span class="slide-number">J3.01</span>
+          <h1 class="slide-title title-hero">IoT — Jour 3</h1>
+          <p class="slide-subtitle" style="text-align: center; margin-top: -1rem;">Le Hardware en profondeur</p>
+          <p class="author">Sion GENDERS</p>
+          <p class="linkedin"><a href="https://www.linkedin.com/in/sion-gdrs/" target="_blank">linkedin.com/in/sion-gdrs</a></p>
+        </div>
+      </div>
+
+      <!-- J3.02 - Rappel -->
+      <div class="slide" data-day="4" data-note="RAPPEL (3 min) — Quick recap de J2-Alt. Promesse : aujourd'hui on comprend vraiment ce qui se passe dans la puce.">
+        <div class="slide-content">
+          <span class="slide-number">J3.02</span>
+          <h1 class="slide-title">Rappel J2-Alt</h1>
+          <ul>
+            <li>Architecture IoT complète : ESP32 → MQTT → WebSocket → Dashboard</li>
+            <li>Communication bidirectionnelle</li>
+            <li>Simulation de capteurs</li>
+          </ul>
+          <div class="info-box">
+            <div class="info-box-title">AUJOURD'HUI</div>
+            <p>On revient aux fondamentaux hardware : comprendre ce qui se passe VRAIMENT dans la puce.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.03 - Objectifs -->
+      <div class="slide" data-day="4" data-note="OBJECTIFS (2 min) — Annoncer les 5 objectifs. Insister sur le côté pratique : 4 TPs dont un flipper !">
+        <div class="slide-content">
+          <span class="slide-number">J3.03</span>
+          <h1 class="slide-title">Objectifs du jour</h1>
+          <ol>
+            <li>Comprendre l'architecture interne d'un microcontrôleur</li>
+            <li>Maîtriser la différence <strong>digital vs analogique</strong></li>
+            <li>Savoir lire les datasheets (pinout)</li>
+            <li>Construire un <strong>projet météo</strong> complet</li>
+            <li>Créer un <strong>Flipper interactif</strong> !</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- J3.04 - Architecture MCU -->
+      <div class="slide" data-day="4" data-note="ARCHITECTURE (7 min) — Expliquer qu'un MCU est un ordinateur miniature. CPU + RAM + Flash + Périphériques. Comparer à un PC : même concepts, échelle différente.">
+        <div class="slide-content">
+          <span class="slide-number">J3.04</span>
+          <h1 class="slide-title">Qu'est-ce qu'un microcontrôleur ?</h1>
+          <p>Un <strong>ordinateur miniature</strong> sur une seule puce :</p>
+          <div class="three-col" style="margin-top: 2rem;">
+            <div class="info-box">
+              <div class="info-box-title">CPU</div>
+              <p>Exécute les instructions du programme</p>
+            </div>
+            <div class="info-box">
+              <div class="info-box-title">RAM</div>
+              <p>Variables, stack, données temporaires</p>
+            </div>
+            <div class="info-box">
+              <div class="info-box-title">FLASH</div>
+              <p>Stockage du code + constantes</p>
+            </div>
+          </div>
+          <div class="info-box success" style="margin-top: 1rem;">
+            <div class="info-box-title">PÉRIPHÉRIQUES</div>
+            <p>GPIO, ADC, DAC, UART, SPI, I2C, PWM... → Interface avec le monde réel</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.05 - ESP32 Specs -->
+      <div class="slide" data-day="4" data-note="SPECS (5 min) — Montrer les specs de l'ESP32. Comparer avec Arduino Uno : ESP32 est bien plus puissant. 240 MHz vs 16 MHz, 520KB vs 2KB RAM.">
+        <div class="slide-content">
+          <span class="slide-number">J3.05</span>
+          <h1 class="slide-title">ESP32 : specs rapides</h1>
+          <div class="two-col">
+            <div>
+              <ul>
+                <li><strong>CPU</strong> : Dual-core Xtensa LX6, 240 MHz</li>
+                <li><strong>RAM</strong> : 520 KB SRAM</li>
+                <li><strong>Flash</strong> : 4 MB (externe)</li>
+                <li><strong>GPIO</strong> : 34 pins (pas tous utilisables)</li>
+              </ul>
+            </div>
+            <div>
+              <ul>
+                <li><strong>ADC</strong> : 2 × 12-bit (18 canaux)</li>
+                <li><strong>DAC</strong> : 2 × 8-bit</li>
+                <li><strong>WiFi</strong> : 802.11 b/g/n</li>
+                <li><strong>Bluetooth</strong> : BLE 4.2</li>
+              </ul>
+            </div>
+          </div>
+          <div class="info-box warning" style="margin-top: 1rem;">
+            <div class="info-box-title">COMPARAISON</div>
+            <p>Arduino Uno = 8-bit, 16 MHz, 2KB RAM. L'ESP32 est 15× plus rapide avec 260× plus de RAM !</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.06 - Pinout -->
+      <div class="slide" data-day="4" data-note="PINOUT (5 min) — Le pinout est la bible du développeur hardware. Chaque pin a des capacités spécifiques. TOUJOURS consulter le pinout de sa carte.">
+        <div class="slide-content">
+          <span class="slide-number">J3.06</span>
+          <h1 class="slide-title">Le pinout : votre bible</h1>
+          <div class="info-box warning">
+            <div class="info-box-title">RÈGLE D'OR</div>
+            <p>TOUJOURS consulter le pinout de VOTRE carte avant de câbler !</p>
+          </div>
+          <p>Chaque pin a des capacités spécifiques :</p>
+          <ul>
+            <li>Certains sont <strong>input-only</strong> (GPIO 34-39)</li>
+            <li>Certains sont réservés (flash interne)</li>
+            <li>Certains ont des fonctions spéciales (boot, UART0...)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- J3.07 - Zones dangereuses -->
+      <div class="slide" data-day="4" data-note="DANGER ZONES (5 min) — Les strapping pins peuvent bloquer le boot. Le flash SPI = interdit. Les input-only n'ont pas de pull-up. UART0 = Serial Monitor.">
+        <div class="slide-content">
+          <span class="slide-number">J3.07</span>
+          <h1 class="slide-title">Zones dangereuses sur ESP32</h1>
+          <div class="two-col">
+            <div>
+              <h3>À éviter</h3>
+              <ul>
+                <li><code>GPIO 0, 2, 15</code> — Strapping pins (boot mode)</li>
+                <li><code>GPIO 6-11</code> — Flash SPI (ne pas toucher !)</li>
+                <li><code>GPIO 34-39</code> — Input only, pas de pull-up</li>
+                <li><code>GPIO 1, 3</code> — UART0 (Serial Monitor)</li>
+              </ul>
+            </div>
+            <div>
+              <div class="info-box success">
+                <div class="info-box-title">SAFE PINS</div>
+                <p>GPIO 4, 5, 12-14, 16-33 (selon carte)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.08 - Digital -->
+      <div class="slide" data-day="4" data-note="DIGITAL (5 min) — Signal digital = 2 états : HIGH ou LOW. Parfait pour LEDs, boutons, relais. Montrer digitalWrite et digitalRead.">
+        <div class="slide-content">
+          <span class="slide-number">J3.08</span>
+          <h1 class="slide-title">Signal Digital</h1>
+          <div class="two-col">
+            <div>
+              <div class="info-box">
+                <div class="info-box-title">2 ÉTATS POSSIBLES</div>
+                <p><strong>HIGH</strong> (3.3V) ou <strong>LOW</strong> (0V)</p>
+                <p style="margin-top: 1rem;">Parfait pour : LED, boutons, relais</p>
+              </div>
+            </div>
+            <div>
+              <pre><code><span class="comment">// Écriture digitale</span>
+<span class="function">digitalWrite</span>(LED_PIN, <span class="keyword">HIGH</span>);  <span class="comment">// 3.3V</span>
+<span class="function">digitalWrite</span>(LED_PIN, <span class="keyword">LOW</span>);   <span class="comment">// 0V</span>
+
+<span class="comment">// Lecture digitale</span>
+<span class="type">int</span> state = <span class="function">digitalRead</span>(BTN_PIN);  <span class="comment">// 0 ou 1</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.09 - Analogique -->
+      <div class="slide" data-day="4" data-note="ANALOGIQUE (5 min) — Le monde réel est analogique ! Valeurs continues entre 0V et 3.3V. Capteurs de température, lumière, son...">
+        <div class="slide-content">
+          <span class="slide-number">J3.09</span>
+          <h1 class="slide-title">Signal Analogique</h1>
+          <div class="two-col">
+            <div>
+              <div class="info-box">
+                <div class="info-box-title">VALEURS CONTINUES</div>
+                <p>0V → 3.3V avec toutes les valeurs entre</p>
+                <p style="margin-top: 1rem;">Parfait pour : capteurs (temp, lumière, son...)</p>
+              </div>
+              <p style="margin-top: 1rem;"><strong>Le monde réel est analogique !</strong></p>
+              <ul>
+                <li>Température : 22.5°C</li>
+                <li>Luminosité : 347 lux</li>
+                <li>Tension batterie : 3.72V</li>
+              </ul>
+            </div>
+            <div>
+              <pre><code><span class="comment">// ADC : Analog to Digital</span>
+<span class="type">int</span> raw = <span class="function">analogRead</span>(SENSOR);
+<span class="comment">// raw = 0 à 4095 (12 bits)</span>
+
+<span class="comment">// Conversion en volts</span>
+<span class="type">float</span> voltage = raw * <span class="number">3.3</span> / <span class="number">4095</span>;</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.10 - ADC -->
+      <div class="slide" data-day="4" data-note="ADC (5 min) — L'ADC convertit une tension en nombre. 12 bits = 4096 niveaux = résolution de 0.8 mV.">
+        <div class="slide-content">
+          <span class="slide-number">J3.10</span>
+          <h1 class="slide-title">ADC : Analog to Digital Converter</h1>
+          <p>Convertit une tension en nombre :</p>
+          <div class="two-col" style="margin-top: 1rem;">
+            <div>
+              <pre><code><span class="number">0V</span>      →  <span class="number">0</span>
+<span class="number">1.65V</span>   →  <span class="number">2048</span>
+<span class="number">3.3V</span>    →  <span class="number">4095</span></code></pre>
+              <div class="info-box" style="margin-top: 1rem;">
+                <div class="info-box-title">SPECS ADC ESP32</div>
+                <ul>
+                  <li>12 bits = 4096 niveaux</li>
+                  <li>Résolution : ~0.8 mV</li>
+                  <li>Pins ADC : GPIO 32-39</li>
+                </ul>
+              </div>
+            </div>
+            <div>
+              <pre><code><span class="type">int</span> raw = <span class="function">analogRead</span>(SENSOR_PIN);
+
+<span class="comment">// Conversion en volts</span>
+<span class="type">float</span> voltage = raw * <span class="number">3.3</span> / <span class="number">4095</span>;
+
+<span class="comment">// Capteur LM35 : 10mV/°C</span>
+<span class="type">float</span> tempC = voltage * <span class="number">100</span>;</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.11 - DAC et PWM -->
+      <div class="slide" data-day="4" data-note="DAC/PWM (5 min) — DAC = vrai analogique mais seulement 2 pins. PWM = pseudo-analogique par modulation. Duty cycle = temps HIGH / période.">
+        <div class="slide-content">
+          <span class="slide-number">J3.11</span>
+          <h1 class="slide-title">DAC & PWM : sortie analogique</h1>
+          <div class="two-col">
+            <div>
+              <h3>DAC (Digital to Analog)</h3>
+              <pre><code><span class="function">dacWrite</span>(DAC_PIN, <span class="number">0</span>);    <span class="comment">// 0V</span>
+<span class="function">dacWrite</span>(DAC_PIN, <span class="number">127</span>);  <span class="comment">// ~1.65V</span>
+<span class="function">dacWrite</span>(DAC_PIN, <span class="number">255</span>);  <span class="comment">// ~3.3V</span></code></pre>
+              <div class="info-box warning" style="margin-top: 1rem;">
+                <div class="info-box-title">LIMITATION</div>
+                <p>Seulement GPIO 25 et GPIO 26 !</p>
+              </div>
+            </div>
+            <div>
+              <h3>PWM (Pseudo-analogique)</h3>
+              <pre><code><span class="comment">// ESP32 LEDC</span>
+<span class="function">ledcSetup</span>(<span class="number">0</span>, <span class="number">5000</span>, <span class="number">8</span>);  <span class="comment">// Chan, Freq, Bits</span>
+<span class="function">ledcAttachPin</span>(LED_PIN, <span class="number">0</span>);
+<span class="function">ledcWrite</span>(<span class="number">0</span>, <span class="number">128</span>);  <span class="comment">// 50% duty</span></code></pre>
+              <p style="margin-top: 1rem;"><code>25%: ▄___▄___</code> LED faible</p>
+              <p><code>50%: ▄▄__▄▄__</code> LED moyenne</p>
+              <p><code>75%: ▄▄▄_▄▄▄_</code> LED forte</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.12 - Tableau récap -->
+      <div class="slide" data-day="4" data-note="RÉCAP (3 min) — Tableau de synthèse. Digital = 0/1, Analog IN = ADC, Analog OUT = DAC ou PWM.">
+        <div class="slide-content">
+          <span class="slide-number">J3.12</span>
+          <h1 class="slide-title">Récapitulatif I/O</h1>
+          <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--accent-cyan);">
+                <th style="text-align: left; padding: 1rem;">Type</th>
+                <th style="text-align: left; padding: 1rem;">Fonction</th>
+                <th style="text-align: left; padding: 1rem;">Valeurs</th>
+                <th style="text-align: left; padding: 1rem;">Pins ESP32</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 0.75rem;">Digital OUT</td>
+                <td style="padding: 0.75rem;"><code>digitalWrite()</code></td>
+                <td style="padding: 0.75rem;">0 / 1</td>
+                <td style="padding: 0.75rem;">Presque tous</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 0.75rem;">Digital IN</td>
+                <td style="padding: 0.75rem;"><code>digitalRead()</code></td>
+                <td style="padding: 0.75rem;">0 / 1</td>
+                <td style="padding: 0.75rem;">Presque tous</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 0.75rem;">Analog IN</td>
+                <td style="padding: 0.75rem;"><code>analogRead()</code></td>
+                <td style="padding: 0.75rem;">0-4095</td>
+                <td style="padding: 0.75rem;">GPIO 32-39</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 0.75rem;">Analog OUT</td>
+                <td style="padding: 0.75rem;"><code>dacWrite()</code></td>
+                <td style="padding: 0.75rem;">0-255</td>
+                <td style="padding: 0.75rem;">GPIO 25, 26</td>
+              </tr>
+              <tr>
+                <td style="padding: 0.75rem;">PWM</td>
+                <td style="padding: 0.75rem;"><code>ledcWrite()</code></td>
+                <td style="padding: 0.75rem;">0-255</td>
+                <td style="padding: 0.75rem;">Presque tous</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- J3.13 - TP1 LED -->
+      <div class="slide" data-day="4" data-note="TP1 (20 min) — LED simple avec millis(). Révision du non-bloquant. Câblage LED + résistance.">
+        <div class="slide-content">
+          <span class="slide-number">J3.TP1</span>
+          <h1 class="slide-title">TP1 : LED simple (warmup)</h1>
+          <div class="two-col">
+            <div>
+              <h3>Objectif</h3>
+              <p>Faire clignoter une LED externe avec <code>millis()</code></p>
+              <h3>Câblage</h3>
+              <pre><code>GPIO 5  ──► Anode (+)
+           │
+         [LED]
+           │
+         [220Ω]
+           │
+GND ───────┘</code></pre>
+            </div>
+            <div>
+              <h3>Code</h3>
+              <pre><code><span class="keyword">const int</span> LED_PIN = <span class="number">5</span>;
+<span class="keyword">unsigned long</span> lastToggle = <span class="number">0</span>;
+<span class="keyword">bool</span> ledState = <span class="keyword">false</span>;
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="keyword">if</span> (<span class="function">millis</span>() - lastToggle >= <span class="number">500</span>) {
+    lastToggle = <span class="function">millis</span>();
+    ledState = !ledState;
+    <span class="function">digitalWrite</span>(LED_PIN, ledState);
+  }
+}</code></pre>
+            </div>
+          </div>
+          <div class="info-box success">
+            <div class="info-box-title">CHECKPOINT</div>
+            <p>LED clignote à 500ms sans <code>delay()</code></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.14 - TP2 Bouton+LED -->
+      <div class="slide" data-day="4" data-note="TP2 (30 min) — Bouton + LED avec debounce. Révision INPUT_PULLUP et anti-rebond.">
+        <div class="slide-content">
+          <span class="slide-number">J3.TP2</span>
+          <h1 class="slide-title">TP2 : Bouton + LED</h1>
+          <div class="two-col">
+            <div>
+              <h3>Objectif</h3>
+              <p>Contrôler la LED avec un bouton (toggle)</p>
+              <h3>Câblage</h3>
+              <pre><code>Bouton:
+GPIO 4 ──┤ ├── GND
+(INPUT_PULLUP)
+
+LED:
+GPIO 5 ──► [LED] ── [220Ω] ── GND</code></pre>
+              <div class="info-box success" style="margin-top: 1rem;">
+                <div class="info-box-title">CHECKPOINT</div>
+                <p>Un appui = un toggle (pas de double toggle)</p>
+              </div>
+            </div>
+            <div>
+              <h3>Debounce (30ms)</h3>
+              <pre><code><span class="keyword">bool</span> rawPressed = (<span class="function">digitalRead</span>(BTN) == <span class="keyword">LOW</span>);
+
+<span class="keyword">if</span> (rawPressed != lastRaw) {
+  lastRaw = rawPressed;
+  lastChange = <span class="function">millis</span>();
+}
+
+<span class="keyword">if</span> ((<span class="function">millis</span>() - lastChange) >= <span class="number">30</span>) {
+  <span class="keyword">if</span> (stableState != rawPressed) {
+    stableState = rawPressed;
+    <span class="keyword">if</span> (stableState) {
+      ledState = !ledState;
+      <span class="function">digitalWrite</span>(LED, ledState);
+    }
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.15 - TP3 Météo intro -->
+      <div class="slide" data-day="4" data-note="TP3 INTRO (5 min) — Présenter le projet météo. DHT22 = capteur temp+humidité. Protocole one-wire, bibliothèque Adafruit.">
+        <div class="slide-content">
+          <span class="slide-number">J3.TP3</span>
+          <h1 class="slide-title">TP3 : Station Météo</h1>
+          <div class="two-col">
+            <div>
+              <h3>Objectif</h3>
+              <p>Lire température et humidité avec un DHT22</p>
+              <h3>Composants</h3>
+              <ul>
+                <li>DHT11 ou DHT22</li>
+                <li>LED status (erreur)</li>
+                <li>(Optionnel) Écran OLED I2C</li>
+              </ul>
+              <div class="info-box success">
+                <div class="info-box-title">CHECKPOINT</div>
+                <p>Données affichées toutes les 2 secondes</p>
+              </div>
+            </div>
+            <div>
+              <h3>Câblage DHT22</h3>
+              <pre><code>DHT22 (4 pins)
+Pin 1 (VCC)  ── 3.3V
+Pin 2 (DATA) ── GPIO 15 + 10kΩ → 3.3V
+Pin 3 (NC)   ── non connecté
+Pin 4 (GND)  ── GND</code></pre>
+              <div class="info-box warning" style="margin-top: 1rem;">
+                <div class="info-box-title">IMPORTANT</div>
+                <p>Pull-up externe 10kΩ requis sur DATA</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.16 - TP3 Code -->
+      <div class="slide" data-day="4" data-note="TP3 CODE (30 min) — Montrer le code complet. Installer la bibliothèque DHT. Gérer les erreurs de lecture.">
+        <div class="slide-content">
+          <span class="slide-number">J3.TP3</span>
+          <h1 class="slide-title">TP3 : Code Station Météo</h1>
+          <pre><code><span class="keyword">#include</span> <span class="string">&lt;DHT.h&gt;</span>
+
+<span class="keyword">const int</span> DHT_PIN = <span class="number">15</span>;
+<span class="keyword">const int</span> LED_PIN = <span class="number">5</span>;
+DHT dht(DHT_PIN, DHT22);
+<span class="keyword">unsigned long</span> lastRead = <span class="number">0</span>;
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="keyword">if</span> (<span class="function">millis</span>() - lastRead >= <span class="number">2000</span>) {
+    lastRead = <span class="function">millis</span>();
+    <span class="type">float</span> h = dht.<span class="function">readHumidity</span>();
+    <span class="type">float</span> t = dht.<span class="function">readTemperature</span>();
+
+    <span class="keyword">if</span> (<span class="function">isnan</span>(h) || <span class="function">isnan</span>(t)) {
+      Serial.<span class="function">println</span>(<span class="string">"ERROR: Lecture DHT echouee!"</span>);
+      <span class="function">digitalWrite</span>(LED_PIN, <span class="keyword">HIGH</span>);  <span class="comment">// LED erreur</span>
+    } <span class="keyword">else</span> {
+      Serial.<span class="function">print</span>(<span class="string">"Temp: "</span>); Serial.<span class="function">print</span>(t, <span class="number">1</span>);
+      Serial.<span class="function">print</span>(<span class="string">" C | Hum: "</span>); Serial.<span class="function">println</span>(h, <span class="number">1</span>);
+      <span class="function">digitalWrite</span>(LED_PIN, <span class="keyword">LOW</span>);
+    }
+  }
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- J3.17 - TP4 Flipper intro -->
+      <div class="slide" data-day="4" data-note="TP4 INTRO (5 min) — Le projet star ! Un flipper contrôlé par hardware. 2 boutons + plunger optionnel. Frontend fourni !">
+        <div class="slide-content">
+          <span class="slide-number">J3.TP4</span>
+          <h1 class="slide-title">TP4 : Projet Flipper !</h1>
+          <div class="two-col">
+            <div>
+              <h3>Concept</h3>
+              <p>Un <strong>flipper virtuel</strong> contrôlé par hardware :</p>
+              <ul>
+                <li>2 boutons = flippers gauche/droite</li>
+                <li>Communication avec un frontend web</li>
+                <li>Bonus : Plunger analogique !</li>
+              </ul>
+              <div class="info-box success">
+                <div class="info-box-title">FRONTEND FOURNI !</div>
+                <p>Vous codez l'ESP32 + le bridge, on fournit le jeu.</p>
+              </div>
+            </div>
+            <div>
+              <h3>Architecture</h3>
+              <pre><code>┌─────────────┐
+│   ESP32     │ ◄─ Buttons
+│  Hardware   │ ◄─ Plunger
+└──────┬──────┘
+       │ Serial/USB
+       ▼
+┌─────────────┐
+│   Bridge    │ Node.js
+└──────┬──────┘
+       │ WebSocket
+       ▼
+┌─────────────┐
+│  Frontend   │ (fourni)
+└─────────────┘</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.18 - TP4 Protocole -->
+      <div class="slide" data-day="4" data-note="TP4 PROTOCOLE (5 min) — Définir le contrat JSON. ESP32 envoie flipper + plunger. Bridge peut renvoyer rumble/score.">
+        <div class="slide-content">
+          <span class="slide-number">J3.TP4</span>
+          <h1 class="slide-title">TP4 : Protocole JSON</h1>
+          <div class="two-col">
+            <div>
+              <h3>ESP32 → Bridge</h3>
+              <pre><code><span class="comment">// Flipper appuyé</span>
+{<span class="string">"type"</span>:<span class="string">"flipper"</span>,
+ <span class="string">"side"</span>:<span class="string">"left"</span>,
+ <span class="string">"state"</span>:<span class="string">"down"</span>}
+
+<span class="comment">// Flipper relâché</span>
+{<span class="string">"type"</span>:<span class="string">"flipper"</span>,
+ <span class="string">"side"</span>:<span class="string">"left"</span>,
+ <span class="string">"state"</span>:<span class="string">"up"</span>}
+
+<span class="comment">// Plunger position</span>
+{<span class="string">"type"</span>:<span class="string">"plunger"</span>,
+ <span class="string">"value"</span>:<span class="number">0.75</span>}
+
+<span class="comment">// Lancement bille</span>
+{<span class="string">"type"</span>:<span class="string">"launch"</span>,
+ <span class="string">"power"</span>:<span class="number">0.9</span>}</code></pre>
+            </div>
+            <div>
+              <h3>Bridge → ESP32</h3>
+              <pre><code><span class="comment">// Feedback haptique</span>
+{<span class="string">"type"</span>:<span class="string">"rumble"</span>,
+ <span class="string">"duration"</span>:<span class="number">100</span>}
+
+<span class="comment">// Score (pour OLED)</span>
+{<span class="string">"type"</span>:<span class="string">"score"</span>,
+ <span class="string">"value"</span>:<span class="number">12500</span>}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.19 - TP4 Code ESP32 -->
+      <div class="slide" data-day="4" data-note="TP4 CODE (45 min) — Code ESP32 pour les boutons. Debounce rapide (10ms) pour le jeu. Lecture et envoi JSON.">
+        <div class="slide-content">
+          <span class="slide-number">J3.TP4</span>
+          <h1 class="slide-title">TP4 : Code ESP32</h1>
+          <pre><code><span class="keyword">const int</span> BTN_LEFT = <span class="number">4</span>;
+<span class="keyword">const int</span> BTN_RIGHT = <span class="number">16</span>;
+<span class="keyword">bool</span> leftState = <span class="keyword">false</span>, rightState = <span class="keyword">false</span>;
+
+<span class="keyword">void</span> <span class="function">sendFlipper</span>(<span class="keyword">const char</span>* side, <span class="keyword">bool</span> pressed) {
+  Serial.<span class="function">print</span>(<span class="string">"{\"type\":\"flipper\",\"side\":\""</span>);
+  Serial.<span class="function">print</span>(side);
+  Serial.<span class="function">print</span>(<span class="string">"\",\"state\":\""</span>);
+  Serial.<span class="function">print</span>(pressed ? <span class="string">"down"</span> : <span class="string">"up"</span>);
+  Serial.<span class="function">println</span>(<span class="string">"\"}"</span>);
+}
+
+<span class="keyword">void</span> <span class="function">loop</span>() {
+  <span class="keyword">bool</span> left = (<span class="function">digitalRead</span>(BTN_LEFT) == <span class="keyword">LOW</span>);
+  <span class="keyword">bool</span> right = (<span class="function">digitalRead</span>(BTN_RIGHT) == <span class="keyword">LOW</span>);
+
+  <span class="keyword">if</span> (left != leftState) { leftState = left; <span class="function">sendFlipper</span>(<span class="string">"left"</span>, left); }
+  <span class="keyword">if</span> (right != rightState) { rightState = right; <span class="function">sendFlipper</span>(<span class="string">"right"</span>, right); }
+  <span class="function">delay</span>(<span class="number">5</span>);
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- J3.20 - TP4 Lancement -->
+      <div class="slide" data-day="4" data-note="TP4 RUN (20 min) — Montrer comment lancer le projet complet. Flasher, bridge, frontend.">
+        <div class="slide-content">
+          <span class="slide-number">J3.TP4</span>
+          <h1 class="slide-title">TP4 : Lancer le projet</h1>
+          <ol>
+            <li><strong>Flasher</strong> l'ESP32 avec le code flipper</li>
+            <li><strong>Trouver</strong> le port série : <code>ls /dev/tty.usb*</code></li>
+            <li><strong>Lancer</strong> le bridge :
+              <pre><code>cd J3-Flipper/bridge
+npm install
+SERIAL_PORT=/dev/tty.usbserial-XXX node index.js</code></pre>
+            </li>
+            <li><strong>Lancer</strong> le frontend :
+              <pre><code>cd J3-Flipper/frontend
+npm install && npm run dev</code></pre>
+            </li>
+            <li><strong>Ouvrir</strong> <code>http://localhost:5173</code></li>
+            <li><strong>Jouer</strong> !</li>
+          </ol>
+          <div class="info-box success">
+            <div class="info-box-title">CHECKPOINT</div>
+            <p>Les flippers répondent aux boutons physiques !</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.21 - TP4 Bonus Plunger -->
+      <div class="slide" data-day="4" data-note="TP4 BONUS (optionnel) — Ajouter un plunger avec potentiomètre. Détection pull + release pour le lancement.">
+        <div class="slide-content">
+          <span class="slide-number">J3.TP4</span>
+          <h1 class="slide-title">TP4 Bonus : Plunger physique</h1>
+          <div class="two-col">
+            <div>
+              <h3>Câblage potentiomètre</h3>
+              <pre><code>Potentiomètre
+Pin 1  ── 3.3V
+Pin 2  ── GPIO 34 (ADC)
+Pin 3  ── GND</code></pre>
+              <h3>Principe</h3>
+              <ul>
+                <li>Repos → valeur basse (~0)</li>
+                <li>Tirer → valeur monte (0 → 1)</li>
+                <li>Relâcher vite → <strong>LAUNCH!</strong></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Code</h3>
+              <pre><code><span class="keyword">void</span> <span class="function">readPlunger</span>() {
+  <span class="type">int</span> raw = <span class="function">analogRead</span>(PLUNGER_PIN);
+  <span class="type">float</span> value = raw / <span class="number">4095.0</span>;
+
+  <span class="comment">// Detect pull</span>
+  <span class="keyword">if</span> (value > <span class="number">0.3</span> && !pulled) {
+    pulled = <span class="keyword">true</span>;
+    maxPull = value;
+  }
+
+  <span class="comment">// Detect release = launch!</span>
+  <span class="keyword">if</span> (pulled && value < <span class="number">0.15</span>) {
+    <span class="function">sendLaunch</span>(maxPull);
+    pulled = <span class="keyword">false</span>;
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.22 - Récap -->
+      <div class="slide" data-day="4" data-note="RÉCAP (5 min) — Résumer les apprentissages du jour. Architecture, digital/analogique, capteurs, projets.">
+        <div class="slide-content">
+          <span class="slide-number">J3.22</span>
+          <h1 class="slide-title">Récap du jour</h1>
+          <div class="three-col">
+            <div class="info-box">
+              <div class="info-box-title">ARCHITECTURE</div>
+              <p>CPU, RAM, Flash, Périphériques</p>
+            </div>
+            <div class="info-box">
+              <div class="info-box-title">DIGITAL</div>
+              <p>0/1 pour boutons, LEDs</p>
+            </div>
+            <div class="info-box">
+              <div class="info-box-title">ANALOGIQUE</div>
+              <p>ADC (lecture), DAC/PWM (écriture)</p>
+            </div>
+          </div>
+          <div class="two-col" style="margin-top: 2rem;">
+            <div class="info-box success">
+              <div class="info-box-title">TP3 - MÉTÉO</div>
+              <p>DHT22, lecture temp/humidité, gestion erreurs</p>
+            </div>
+            <div class="info-box success">
+              <div class="info-box-title">TP4 - FLIPPER</div>
+              <p>Boutons, Serial JSON, WebSocket, jeu interactif !</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- J3.23 - Livrables -->
+      <div class="slide" data-day="4" data-note="LIVRABLES (2 min) — Les 4 sketches attendus. Bonus : combiner météo + MQTT pour un dashboard live.">
+        <div class="slide-content">
+          <span class="slide-number">J3.23</span>
+          <h1 class="slide-title">Livrables J3</h1>
+          <ol>
+            <li><code>J3_TP1_LED.ino</code> — LED non-bloquante</li>
+            <li><code>J3_TP2_Button_LED.ino</code> — Bouton avec debounce</li>
+            <li><code>J3_TP3_Meteo.ino</code> — Station météo</li>
+            <li><code>J3_TP4_Flipper.ino</code> — Contrôleur flipper</li>
+          </ol>
+          <div class="info-box" style="margin-top: 2rem;">
+            <div class="info-box-title">BONUS</div>
+            <p>Combiner Station Météo + MQTT (J2-Alt) pour un dashboard météo live !</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -3201,6 +3894,9 @@ if (cmd == "LED") publishAck("LED", true);</code></pre>
           break;
         case '3':
           filterSlidesByDay(3);
+          break;
+        case '4':
+          filterSlidesByDay(4);
           break;
       }
     });

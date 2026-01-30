@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flipper IoT - HETIC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+  <div class="game-container">
+    <header class="game-header">
+      <div class="logo">FLIPPER<span>IoT</span></div>
+      <div class="connection-status" id="connectionStatus">
+        <span class="dot"></span>
+        <span class="text">Disconnected</span>
+      </div>
+    </header>
+
+    <div class="scoreboard">
+      <div class="score-item">
+        <span class="label">SCORE</span>
+        <span class="value" id="score">0</span>
+      </div>
+      <div class="score-item">
+        <span class="label">BALLS</span>
+        <span class="value" id="balls">3</span>
+      </div>
+      <div class="score-item">
+        <span class="label">HIGH</span>
+        <span class="value" id="highScore">0</span>
+      </div>
+    </div>
+
+    <div class="game-area">
+      <canvas id="gameCanvas" width="400" height="700"></canvas>
+
+      <div class="plunger-container" id="plungerContainer">
+        <div class="plunger-track">
+          <div class="plunger-handle" id="plungerHandle"></div>
+        </div>
+        <div class="plunger-label">PLUNGER</div>
+      </div>
+    </div>
+
+    <div class="controls-info">
+      <div class="control-hint">
+        <kbd>A</kbd> / <kbd>LEFT BTN</kbd>
+        <span>Left Flipper</span>
+      </div>
+      <div class="control-hint">
+        <kbd>L</kbd> / <kbd>RIGHT BTN</kbd>
+        <span>Right Flipper</span>
+      </div>
+      <div class="control-hint">
+        <kbd>SPACE</kbd> / <kbd>PLUNGER</kbd>
+        <span>Launch Ball</span>
+      </div>
+    </div>
+
+    <div class="debug-panel" id="debugPanel">
+      <div class="debug-title">Debug Log</div>
+      <div class="debug-log" id="debugLog"></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="gameOverlay">
+    <div class="overlay-content">
+      <h2 id="overlayTitle">GAME OVER</h2>
+      <p id="overlayScore">Score: 0</p>
+      <button id="restartBtn">NEW GAME</button>
+    </div>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

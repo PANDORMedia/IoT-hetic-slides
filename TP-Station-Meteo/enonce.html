@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>TP Station Météo Connectée - HETIC WEB3</title>
+    <style>
+        @page { margin: 20mm; size: A4; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11pt; line-height: 1.5; max-width: 210mm; margin: 0 auto; padding: 20mm; color: #333; }
+        h1 { font-size: 20pt; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 16px; }
+        h2 { font-size: 14pt; margin-top: 24px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+        h3 { font-size: 12pt; margin-top: 16px; }
+        table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background: #f5f5f5; }
+        code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 10pt; }
+        pre { background: #f5f5f5; padding: 12px; border-radius: 4px; overflow-x: auto; font-size: 10pt; }
+        ul, ol { padding-left: 24px; }
+        li { margin: 4px 0; }
+        .meta { background: #f9f9f9; padding: 12px; border-radius: 4px; margin-bottom: 20px; }
+        .meta strong { display: inline-block; width: 120px; }
+        .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin: 16px 0; }
+        .checklist { list-style: none; padding-left: 0; }
+        .checklist li { padding-left: 24px; position: relative; }
+        .checklist li::before { content: "☐"; position: absolute; left: 0; }
+        hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
+        a { color: #0066cc; }
+        @media print { body { padding: 0; } }
+    </style>
+</head>
+<body>
+
+<h1>TP Station Météo Connectée - HETIC WEB3</h1>
+
+<div class="meta">
+    <strong>Travail en groupe</strong> 3-4 personnes<br>
+    <strong>Rendu</strong> Aujourd'hui 16h00<br>
+    <strong>Matériel</strong> ESP32, DHT22 (partagé), 1 bouton, 2 LEDs, résistances
+</div>
+
+<hr>
+
+<h2>Objectif</h2>
+<p>Réaliser une station météo connectée qui :</p>
+<ul>
+    <li>Lit température et humidité (DHT22)</li>
+    <li>Affiche les données sur une interface web en temps réel</li>
+    <li>Permet de basculer entre °C et °F via un bouton physique</li>
+    <li>Indique le mode actuel avec 2 LEDs (une par unité)</li>
+</ul>
+
+<hr>
+
+<h2>Contrainte matérielle importante</h2>
+
+<div class="warning">
+    <strong>7 capteurs DHT22 disponibles pour toute la promo.</strong>
+</div>
+
+<p>Vous devez :</p>
+<ol>
+    <li>Développer un <strong>mode simulation</strong> qui génère des données fictives</li>
+    <li>Valider votre code sur <strong>TinkerCAD</strong> avant d'emprunter un capteur</li>
+    <li>Emprunter le DHT22 uniquement pour les tests finaux</li>
+</ol>
+
+<p>Le code final doit pouvoir basculer entre mode simulation et mode réel.</p>
+
+<hr>
+
+<h2>Spécifications fonctionnelles</h2>
+
+<h3>Hardware (ESP32)</h3>
+
+<table>
+    <tr><th>Composant</th><th>Fonction</th></tr>
+    <tr><td>DHT22</td><td>Lecture température + humidité</td></tr>
+    <tr><td>Bouton</td><td>Bascule °C ↔ °F</td></tr>
+    <tr><td>LED 1</td><td>Allumée = mode Celsius</td></tr>
+    <tr><td>LED 2</td><td>Allumée = mode Fahrenheit</td></tr>
+</table>
+
+<ul>
+    <li>Le bouton doit être anti-rebond (debounce)</li>
+    <li>Une seule LED allumée à la fois</li>
+    <li>Datasheet DHT22 : <a href="https://cdn.sparkfun.com/assets/f/7/d/9/c/DHT22.pdf">https://cdn.sparkfun.com/assets/f/7/d/9/c/DHT22.pdf</a></li>
+</ul>
+
+<h3>Communication</h3>
+
+<ul>
+    <li>Protocole : <strong>MQTT</strong></li>
+    <li>Format des messages : <strong>JSON</strong></li>
+    <li>La station publie ses données périodiquement</li>
+    <li>L'interface web s'abonne et affiche en temps réel</li>
+</ul>
+
+<hr>
+
+<h2>Deux parcours au choix</h2>
+
+<h3>Parcours A — Infrastructure fournie</h3>
+
+<p>Utiliser le broker MQTT mutualisé :</p>
+
+<pre>Host : captain.dev0.pandor.cloud
+Port : 1884
+Auth : aucune</pre>
+
+<p><strong>À réaliser :</strong></p>
+<ol>
+    <li>Code ESP32 (lecture capteur + publication MQTT)</li>
+    <li>Bridge WebSocket (relai MQTT → navigateur)</li>
+    <li>Interface web (affichage temps réel)</li>
+</ol>
+
+<h3>Parcours B — Infrastructure autonome</h3>
+
+<p>Installer votre propre infrastructure sur Raspberry Pi :</p>
+
+<p><strong>À réaliser :</strong></p>
+<ol>
+    <li>Tout le parcours A, plus :</li>
+    <li>Broker Mosquitto sur le Raspberry Pi</li>
+    <li>Serveur web sur le Raspberry Pi</li>
+    <li>Configuration du Pi en <strong>Access Point</strong> (point d'accès WiFi)</li>
+</ol>
+
+<p>L'objectif : un kiosque météo autonome, sans dépendance internet.</p>
+
+<hr>
+
+<h2>Bonus</h2>
+
+<p>Permettre de changer l'unité (°C/°F) depuis l'interface web.<br>
+La commande doit être envoyée à l'ESP32 qui met à jour ses LEDs.</p>
+
+<hr>
+
+<h2>Étapes suggérées</h2>
+
+<h3>1. Préparation (sans matériel)</h3>
+<ul class="checklist">
+    <li>Définir le schéma de câblage</li>
+    <li>Choisir les pins GPIO</li>
+    <li>Définir le format JSON des messages</li>
+    <li>Définir les topics MQTT</li>
+</ul>
+
+<h3>2. Code ESP32 — Mode simulation</h3>
+<ul class="checklist">
+    <li>Implémenter la génération de données fictives</li>
+    <li>Implémenter le bouton avec debounce</li>
+    <li>Implémenter les LEDs indicatrices</li>
+    <li>Tester sur TinkerCAD</li>
+</ul>
+
+<h3>3. Communication MQTT</h3>
+<ul class="checklist">
+    <li>Connexion WiFi</li>
+    <li>Connexion au broker MQTT</li>
+    <li>Publication des données</li>
+    <li>(Bonus) Réception des commandes</li>
+</ul>
+
+<h3>4. Interface web</h3>
+<ul class="checklist">
+    <li>Bridge MQTT → WebSocket</li>
+    <li>Page HTML avec affichage temps réel</li>
+    <li>(Bonus) Bouton pour changer l'unité</li>
+</ul>
+
+<h3>5. Intégration DHT22</h3>
+<ul class="checklist">
+    <li>Emprunter un capteur</li>
+    <li>Adapter le code pour lecture réelle</li>
+    <li>Valider le fonctionnement complet</li>
+</ul>
+
+<h3>6. Parcours B uniquement</h3>
+<ul class="checklist">
+    <li>Installer Mosquitto sur le Pi</li>
+    <li>Configurer le Pi en Access Point</li>
+    <li>Déployer le serveur web</li>
+    <li>Tester en mode autonome</li>
+</ul>
+
+<hr>
+
+<h2>Livrables</h2>
+
+<div class="warning">
+    <strong>Rendu via repository Git</strong> — l'historique des commits de chaque membre fait foi sur la contribution individuelle.<br><br>
+    <strong>Envoyer le lien du repo à : <a href="mailto:sean@pandor.media">sean@pandor.media</a></strong>
+</div>
+
+<h3>Contenu attendu</h3>
+
+<ol>
+    <li><strong>Code source</strong> (ESP32 + Bridge + Frontend)</li>
+    <li><strong>Dossier <code>docs/</code></strong> contenant :
+        <ul>
+            <li>Photos du montage hardware</li>
+            <li>Screenshots TinkerCAD</li>
+            <li>Schéma de câblage</li>
+        </ul>
+    </li>
+    <li><strong>Dossier <code>config/</code></strong> (Parcours B uniquement) :
+        <ul>
+            <li>Fichiers de configuration Raspberry Pi</li>
+            <li>Documentation pour reproduire la configuration (Access Point, Mosquitto, etc.)</li>
+        </ul>
+    </li>
+    <li><strong>README.md</strong> avec instructions de lancement</li>
+    <li><strong>Démonstration fonctionnelle</strong> en fin de journée</li>
+</ol>
+
+<h3>Structure du repository</h3>
+
+<pre>station-meteo/
+├── esp32/
+│   └── station.ino
+├── bridge/
+│   └── ...
+├── frontend/
+│   └── ...
+├── docs/
+│   ├── photos/
+│   │   └── montage.jpg
+│   ├── tinkercad/
+│   │   └── simulation.png
+│   └── schema-cablage.png
+├── config/                    # Parcours B
+│   ├── mosquitto.conf
+│   ├── hostapd.conf
+│   └── SETUP.md              # Tuto reproduction
+└── README.md</pre>
+
+<hr>
+
+<h2>Ressources</h2>
+
+<ul>
+    <li>Datasheet DHT22 : <a href="https://cdn.sparkfun.com/assets/f/7/d/9/c/DHT22.pdf">https://cdn.sparkfun.com/assets/f/7/d/9/c/DHT22.pdf</a></li>
+    <li>TinkerCAD : <a href="https://www.tinkercad.com/">https://www.tinkercad.com/</a></li>
+    <li>Bibliothèque DHT : Adafruit DHT sensor library</li>
+    <li>Bibliothèque MQTT : PubSubClient</li>
+</ul>
+
+<hr>
+
+<h2>Critères d'évaluation</h2>
+
+<ul>
+    <li>Fonctionnement du mode simulation</li>
+    <li>Fonctionnement avec capteur réel</li>
+    <li>Qualité du code (lisibilité, structure)</li>
+    <li>Interface web fonctionnelle</li>
+    <li>Bonus réalisés</li>
+</ul>
+
+</body>
+</html>
